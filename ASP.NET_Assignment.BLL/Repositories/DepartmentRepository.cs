@@ -13,9 +13,9 @@ namespace ASP.NET_Assignment.BLL.Repositories
     {
         private readonly AssignmentDbContext _context;
 
-        public DepartmentRepository()
+        public DepartmentRepository(AssignmentDbContext assignmentDbContext)
         {
-            _context = new AssignmentDbContext();
+            _context = assignmentDbContext;
         }
 
         public IEnumerable<Department> GetAll()
