@@ -20,7 +20,7 @@ namespace ASP.NET.Assignment.PL.Controllers
             var departments = _repository.GetAll();
             return View(departments);
         }
-
+        [HttpGet]
         public IActionResult Create() {
             return View();
         }
@@ -42,6 +42,12 @@ namespace ASP.NET.Assignment.PL.Controllers
                 }
             }
             return View(createDepartmentDto);
+        }
+
+        public IActionResult Details(int id)
+        {
+            var department = _repository.Get(id);
+            return View(department);
         }
     }
 }
