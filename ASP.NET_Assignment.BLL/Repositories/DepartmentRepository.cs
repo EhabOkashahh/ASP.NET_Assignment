@@ -35,7 +35,8 @@ namespace ASP.NET_Assignment.BLL.Repositories
         }
         public int Update(Department model)
         {
-            _context.Departments.Update(model);
+            var old = Get(model.Id);
+            _context.Entry(old).CurrentValues.SetValues(model);
             return _context.SaveChanges();
         }
         public int Delete(Department model)

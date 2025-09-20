@@ -49,5 +49,21 @@ namespace ASP.NET.Assignment.PL.Controllers
             var department = _repository.Get(id);
             return View(department);
         }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var department = _repository.Get(id);
+            return View(department);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Department department) {
+            if (ModelState.IsValid) {  
+                _repository.Update(department);
+                return RedirectToAction(nameof(Details) , new {id = department.Id});
+            }
+            return View(department);
+        }
     }
 }
