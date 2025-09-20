@@ -18,5 +18,9 @@ namespace ASP.NET.Assignment.PL.Controllers
             var departments = _repository.GetAll();
             return View(departments);
         }
+
+        public IActionResult Create() {
+            return View();
+        }
     }
 }
