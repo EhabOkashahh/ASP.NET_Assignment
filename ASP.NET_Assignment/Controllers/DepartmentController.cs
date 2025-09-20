@@ -65,5 +65,19 @@ namespace ASP.NET.Assignment.PL.Controllers
             }
             return View(department);
         }
+        public IActionResult Delete()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Delete(int id) {
+            var department = _repository.Get(id);
+            var res = _repository.Delete(department);
+            if(res > 0)
+            {
+                return View("DeletionSuccess");
+            }
+            return View("DeletionUnSuccess");
+        }
     }
 }

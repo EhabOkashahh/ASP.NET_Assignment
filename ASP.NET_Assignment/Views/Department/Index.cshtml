@@ -28,7 +28,7 @@
                     <td>@item.DateOfCreation</td>
                     <td><a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning">Details</a></td>
                     <td><a asp-action="Update" class="btn btn-success">Update</a></td>
-                    <td><a asp-action="Delete" class="btn btn-danger">Delete</a></td>
+                    <td><a asp-action="Delete" class="btn btn-danger" asp-Route-id="@item.Id">Delete</a></td>
                 </tr>
             }
         </tbody>
@@ -37,8 +37,7 @@
 else
 {
     <div class="alert alert-info">
-        <h4>There are no Department</h4>
+        <h4>There are no Departments</h4>
     </div>
 }
-
 
