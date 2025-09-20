@@ -43,5 +43,11 @@ namespace ASP.NET.Assignment.PL.Controllers
             }
             return View(createDepartmentDto);
         }
+
+        public IActionResult Details() { 
+        
+
+            return View();
+        }
     }
 }
