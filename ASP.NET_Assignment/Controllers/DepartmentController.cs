@@ -1,5 +1,7 @@
-﻿using ASP.NET_Assignment.BLL.Interfaces;
+﻿using ASP.NET.Assignment.PL.DTOs;
+using ASP.NET_Assignment.BLL.Interfaces;
 using ASP.NET_Assignment.BLL.Repositories;
+using ASP.NET_Assignment.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASP.NET.Assignment.PL.Controllers
@@ -21,6 +23,25 @@ namespace ASP.NET.Assignment.PL.Controllers
 
         public IActionResult Create() {
             return View();
+        }
+        [HttpPost]
+        public IActionResult Create(CreateDepartmentDto createDepartmentDto) {
+
+            if (ModelState.IsValid)
+            {
+                Department department = new Department()
+                {
+                    Code = createDepartmentDto.Code,
+                    Name = createDepartmentDto.Name,
+                    DateOfCreation = createDepartmentDto.DateOfCreation,
+                };
+                var state = _repository.Add(department);
+                if (state > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(createDepartmentDto);
         }
     }
 }
