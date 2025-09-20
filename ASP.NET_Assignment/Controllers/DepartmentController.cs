@@ -3,6 +3,7 @@ using ASP.NET_Assignment.BLL.Interfaces;
 using ASP.NET_Assignment.BLL.Repositories;
 using ASP.NET_Assignment.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
@@ -78,6 +79,23 @@ namespace ASP.NET.Assignment.PL.Controllers
                 return View("DeletionSuccess");
             }
             return View("DeletionUnSuccess");
+        }
+
+        public IActionResult Update(int id)
+        {
+            var department = _repository.Get(id);
+            return View(department);
+        }
+
+        [HttpPost]
+        public IActionResult Update(Department department)
+        {
+            if (ModelState.IsValid)
+            {
+                _repository.Update(department);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(department);
         }
     }
 }
