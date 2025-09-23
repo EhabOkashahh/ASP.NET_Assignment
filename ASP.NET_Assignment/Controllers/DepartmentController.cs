@@ -4,6 +4,7 @@ using ASP.NET_Assignment.BLL.Repositories;
 using ASP.NET_Assignment.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 
 namespace ASP.NET.Assignment.PL.Controllers
@@ -61,10 +62,8 @@ namespace ASP.NET.Assignment.PL.Controllers
         {
             return Details(id);
         }
-
-        [HttpPost]
+            [HttpPost]
         public IActionResult Edit(int? id , CreateDepartmentDto createDepartmentDto) {
-            if (ModelState.IsValid) {  
                 Department department = new Department()
                 {
                     Code = createDepartmentDto.Code,
@@ -72,10 +71,11 @@ namespace ASP.NET.Assignment.PL.Controllers
                     DateOfCreation =createDepartmentDto.DateOfCreation,
                     Id = id.Value
                 };
+            if (ModelState.IsValid) {  
                 _repository.Update(department);
                 return RedirectToAction(nameof(Details) , new {id = id.Value});
             }
-            return View(createDepartmentDto);
+            return View(department);
         }
         public IActionResult Delete()
         {
@@ -100,19 +100,19 @@ namespace ASP.NET.Assignment.PL.Controllers
         [HttpPost]
         public IActionResult Update([FromRoute]int? id , CreateDepartmentDto createDepartmentDto)
         {
+            Department department = new Department()
+            {
+                Code = createDepartmentDto.Code,
+                Name = createDepartmentDto.Name,
+                DateOfCreation = createDepartmentDto.DateOfCreation,
+                Id = id.Value
+            };
             if (ModelState.IsValid)
             {
-                Department department = new Department()
-                {
-                    Code = createDepartmentDto.Code,
-                    Name = createDepartmentDto.Name,
-                    DateOfCreation = createDepartmentDto.DateOfCreation,
-                    Id = id.Value
-                };
                 _repository.Update(department);
-                return RedirectToAction(nameof(Index), new { id = id.Value });
+                return RedirectToAction(nameof(Index));
             }
-            return View(createDepartmentDto);
+            return View(department);
         }
     }
 }
