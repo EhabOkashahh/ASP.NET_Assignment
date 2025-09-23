@@ -1,0 +1,61 @@
+﻿@model Employee
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details Page</h1>
+
+<div>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" placeholder="Enter Name" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Age" class="form-label"></label>
+        <input asp-for="Age" class="form-control" placeholder="Enter Age" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Salary" class="form-label"></label>
+        <input asp-for="Salary" class="form-control" placeholder="Enter Salary" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label"></label>
+        <input asp-for="Address" class="form-control" placeholder="Enter Address" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" placeholder="Enter Phone Number" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" placeholder="Enter Email" readonly>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsActive" class="form-check-input" type="checkbox" disabled>
+        <label asp-for="IsActive" class="form-check-label" ></label>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsDeleted" class="form-check-input" type="checkbox" disabled>
+        <label asp-for="IsDeleted" class="form-check-label" ></label>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="HireDate" class="form-label"></label>
+        <input asp-for="HireDate" class="form-control" type="date" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DateOfCreation" class="form-label">Create at</label>
+        <input asp-for="DateOfCreation" class="form-control" type="datetime-local" readonly>
+    </div>
+
+    <a asp-action="Edit" asp-route-id="@Model.Id" "type="submit" class="btn btn-warning mt-2">Edit</a>
+    <a class="btn btn-light mt-2" asp-action="Index">Back To List</a>
+</div>  

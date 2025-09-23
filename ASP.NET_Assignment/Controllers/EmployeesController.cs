@@ -51,5 +51,57 @@ namespace ASP.NET.Assignment.PL.Controllers
             }
             return View(createEmployeeDTO);
         }
+
+        public IActionResult Details(int? id)
+        {
+            var Employee = _repositroy.Get(id.Value);
+            return View(Employee);
+        }
+        [HttpGet]
+        public IActionResult Edit(int? id)
+        {
+            var Employee = _repositroy.Get(id.Value);
+            CreateEmployeeDTO createDepartmentDto = new CreateEmployeeDTO()
+            {
+                Age = Employee.Age,
+                Address = Employee.Address,
+                DateOfCreation = Employee.DateOfCreation,
+                Email = Employee.Email,
+                HireDate = Employee.HireDate,
+                IsActive = Employee.IsActive,
+                IsDeleted = Employee.IsDeleted,
+                Name = Employee.Name,
+                Phone = Employee.Phone,
+                Salary = Employee.Salary,
+            };
+            ViewBag.Id = id.Value;
+            return View(createDepartmentDto);
+        }
+        [HttpPost]
+        public IActionResult Edit([FromRoute]int? id , CreateEmployeeDTO createEmployeeDTO)
+        {
+            if (ModelState.IsValid) { 
+                Employee employee = new Employee()
+                {
+                    Id = id.Value,
+                    Age = createEmployeeDTO.Age,
+                    Address = createEmployeeDTO.Address,
+                    DateOfCreation = createEmployeeDTO.DateOfCreation,
+                    Email = createEmployeeDTO.Email,
+                    HireDate = createEmployeeDTO.HireDate,
+                    IsActive = createEmployeeDTO.IsActive,
+                    IsDeleted = createEmployeeDTO.IsDeleted,
+                    Name = createEmployeeDTO.Name,
+                    Phone = createEmployeeDTO.Phone,
+                    Salary = createEmployeeDTO.Salary,
+                };
+
+                var res = _repositroy.Update(employee);
+                if(res >= 0) return RedirectToAction(nameof(Details), new {id = id.Value});
+                else BadRequest("Something Wrong Happen");
+            }
+            ViewBag.Id = id.Value;
+            return View(createEmployeeDTO);
+        }
     }
 }
