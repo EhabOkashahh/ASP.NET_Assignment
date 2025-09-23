@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace ASP.NET_Assignment.BLL.Repositories
 {
-    public class DepartmentRepository : GenericMainClass<Department> , IDepartmentRepository
+    public class EmployeeRepository : GenericMainClass<Employee> , IEmployeeRepositroy
     {
-        public DepartmentRepository(AssignmentDbContext assignmentDbContext) : base( assignmentDbContext)
+        public EmployeeRepository(AssignmentDbContext assignmentDbContext) : base(assignmentDbContext)
         {
             
         }

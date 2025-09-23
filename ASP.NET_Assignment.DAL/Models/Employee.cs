@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace ASP.NET_Assignment.DAL.Models
 {
-    public class Employee
+    public class Employee : BaseModel
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
         public int? Age { get; set; }
         public decimal Salary { get; set; }
         public string Address { get; set; }
@@ -18,6 +16,5 @@ namespace ASP.NET_Assignment.DAL.Models
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public DateOnly HireDate { get; set; }
-        public DateOnly CraetionDate { get; set; }
     }
 }

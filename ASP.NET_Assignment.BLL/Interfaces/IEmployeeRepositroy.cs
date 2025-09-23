@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace ASP.NET_Assignment.BLL.Interfaces
 {
-    public interface IDepartmentRepository : IMainRepository<Department>
+    public interface IEmployeeRepositroy : IMainRepository<Employee>
     {
-        
     }
 }

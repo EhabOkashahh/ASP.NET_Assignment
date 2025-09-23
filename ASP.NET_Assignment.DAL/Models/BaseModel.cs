@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace ASP.NET_Assignment.DAL.Models
 {
-    public class Department : BaseModel
+    public class BaseModel
     {
-        public string Code { get; set; }
+        public int Id { get; set; }
+        public DateTime DateOfCreation { get; set; }
+        public string Name { get; set; }
+
     }
 }
