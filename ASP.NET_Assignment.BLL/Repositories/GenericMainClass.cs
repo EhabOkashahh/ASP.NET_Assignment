@@ -1,6 +1,7 @@
 ﻿using ASP.NET_Assignment.BLL.Interfaces;
 using ASP.NET_Assignment.DAL.Data.Contexts;
 using ASP.NET_Assignment.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,15 @@ namespace ASP.NET_Assignment.BLL.Repositories
         {
             var old = Get(model.Id);
             _context.Entry(old).CurrentValues.SetValues(model);
+
+            if (!_context.Entry(old).State.HasFlag(EntityState.Modified))
+            {
+                return 0;
+            }
+
             return _context.SaveChanges();
+
+
         }
         public int Delete(T model)
         {
