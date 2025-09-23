@@ -51,5 +51,10 @@ namespace ASP.NET.Assignment.PL.Controllers
             }
             return View(createEmployeeDTO);
         }
+
+        public IActionResult Detalis(int? id)
+        {
+            return View();
+        }
     }
 }
