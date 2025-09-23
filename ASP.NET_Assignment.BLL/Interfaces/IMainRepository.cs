@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 
 namespace ASP.NET_Assignment.BLL.Interfaces
 {
-    public interface IDepartmentRepository : IMainRepository<Department>
+    public interface IMainRepository<T> where T : BaseModel
     {
-        
+        IEnumerable<T> GetAll();
+        T? Get(int id);
+        int Add(T model);
+        int Update(T model);
+        int Delete(T model);
     }
 }
