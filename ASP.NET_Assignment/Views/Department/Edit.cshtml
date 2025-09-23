@@ -1,28 +1,14 @@
-﻿@model Department
+﻿@model CreateDepartmentDto
 @{
     ViewData["Title"] = "Edit";
 }
 
 <h1 class="mb-3">Edit</h1>
 <form asp-action="Edit">
-    <div class="mb-3">
-        <label asp-for="Code" class="form-label"></label>
-        <input asp-for="Code" class="form-control">
-        <span asp-validation-for="Code" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control">
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="DateOfCreation" class="form-label">Create at</label>
-        <input asp-for="DateOfCreation" class="form-control">
-        <span asp-validation-for="DateOfCreation" class="text-danger"></span>
-    </div>
+    <partial name="PartialViews/_FormView">
 
     <button type="submit" class="btn btn-primary mt-2">Save Changes</button>
-    <a class ="btn btn-light mt-2" asp-action="Details" asp-route-id ="@Model.Id" >Back To Details Page</a>
+    <a class ="btn btn-light mt-2" asp-action="Details" asp-route-id ="@ViewBag.ID" >Back To Details Page</a>
 </form>
 
 @section ValidationSection{

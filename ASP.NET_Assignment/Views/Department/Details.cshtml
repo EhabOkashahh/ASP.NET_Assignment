@@ -1,4 +1,4 @@
-﻿@model Department
+﻿@model CreateDepartmentDto
 @{
     ViewData["Title"] = "Details";
 }
@@ -8,19 +8,16 @@
     <div class="mb-3">
         <label asp-for="Code" class="form-label"></label>
         <input asp-for="Code" class="form-control" readonly>
-        <span asp-validation-for="Code" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
         <input asp-for="Name" class="form-control" readonly>
-        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="DateOfCreation" class="form-label">Create at</label>
         <input asp-for="DateOfCreation" class="form-control" readonly>
-        <span asp-validation-for="DateOfCreation" class="text-danger"></span>
     </div>
 
-    <a class="btn btn-warning mt-2" asp-route-id ="@Model.Id" asp-action="Edit">Edit</a>
+    <a class="btn btn-warning mt-2" asp-route-id ="@ViewBag.Id" asp-action="Edit">Edit</a>
     <a class="btn btn-light mt-2" asp-action="index" asp-controller="Department">Back To List</a>
 </form>
