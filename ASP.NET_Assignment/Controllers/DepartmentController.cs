@@ -53,8 +53,14 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             var department = _repository.Get(id.Value);
             if (department is null) return NotFound(new {StatusCode = 404 , message = $"Dpeartment With Id {id} not found"});
-
-            return View(department);
+            CreateDepartmentDto createDepartmentDto = new CreateDepartmentDto()
+            {
+                Name = department.Name,
+                Code= department.Code,
+                DateOfCreation= department.DateOfCreation,
+            };
+            ViewBag.Id = id.Value;
+            return View(createDepartmentDto);
         }
 
         [HttpGet]
@@ -64,6 +70,7 @@ namespace ASP.NET.Assignment.PL.Controllers
         }
             [HttpPost]
         public IActionResult Edit(int? id , CreateDepartmentDto createDepartmentDto) {
+            if (ModelState.IsValid) {  
                 Department department = new Department()
                 {
                     Code = createDepartmentDto.Code,
@@ -71,11 +78,11 @@ namespace ASP.NET.Assignment.PL.Controllers
                     DateOfCreation =createDepartmentDto.DateOfCreation,
                     Id = id.Value
                 };
-            if (ModelState.IsValid) {  
                 _repository.Update(department);
                 return RedirectToAction(nameof(Details) , new {id = id.Value});
             }
-            return View(department);
+            ViewBag.Id = id.Value;
+            return View(createDepartmentDto);
         }
         public IActionResult Delete()
         {
@@ -100,6 +107,8 @@ namespace ASP.NET.Assignment.PL.Controllers
         [HttpPost]
         public IActionResult Update([FromRoute]int? id , CreateDepartmentDto createDepartmentDto)
         {
+            if (ModelState.IsValid)
+            {
             Department department = new Department()
             {
                 Code = createDepartmentDto.Code,
@@ -107,12 +116,11 @@ namespace ASP.NET.Assignment.PL.Controllers
                 DateOfCreation = createDepartmentDto.DateOfCreation,
                 Id = id.Value
             };
-            if (ModelState.IsValid)
-            {
                 _repository.Update(department);
                 return RedirectToAction(nameof(Index));
             }
-            return View(department);
+            ViewBag.Id = id.Value;
+            return View(createDepartmentDto);
         }
     }
 }

@@ -26,9 +26,7 @@
                     <td>@item.Code</td>
                     <td>@item.Name</td>
                     <td>@item.DateOfCreation</td>
-                    <td><a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning">Details</a></td>
-                    <td><a asp-action="Update" class="btn btn-success" asp-Route-id="@item.Id">Update</a></td>
-                    <td><a asp-action="Delete" class="btn btn-danger" asp-Route-id="@item.Id">Delete</a></td>
+                    <partial name="_ButtonPartialViews" model="@item.Id" />
                 </tr>
             }
         </tbody>
