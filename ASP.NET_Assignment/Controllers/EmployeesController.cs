@@ -1,0 +1,55 @@
+﻿using ASP.NET.Assignment.PL.DTOs;
+using ASP.NET_Assignment.BLL.Interfaces;
+using ASP.NET_Assignment.BLL.Repositories;
+using ASP.NET_Assignment.DAL.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.CodeDom;
+
+namespace ASP.NET.Assignment.PL.Controllers
+{
+    public class EmployeesController : Controller
+    {
+        private readonly IEmployeeRepositroy _repositroy;
+        public EmployeesController(IEmployeeRepositroy employeeRepository)
+        {
+            _repositroy = employeeRepository;
+        }
+
+        public IActionResult Index()
+        {
+            var Employees = _repositroy.GetAll();
+            return View(Employees);
+        }
+        [HttpGet]
+        public IActionResult Create() {
+        
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Create(CreateEmployeeDTO createEmployeeDTO) {
+
+            if (ModelState.IsValid)
+            {
+                Employee employee = new Employee()
+                {
+                    Age = createEmployeeDTO.Age,
+                    Address= createEmployeeDTO.Address,
+                    DateOfCreation = createEmployeeDTO.DateOfCreation,
+                    Email = createEmployeeDTO.Email,
+                    HireDate = createEmployeeDTO.HireDate,
+                    IsActive = createEmployeeDTO.IsActive,
+                    IsDeleted = createEmployeeDTO.IsDeleted,
+                    Name = createEmployeeDTO.Name,
+                    Phone = createEmployeeDTO.Phone,
+                    Salary = createEmployeeDTO.Salary,
+                };
+                var count = _repositroy.Add(employee);
+                if(count > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(createEmployeeDTO);
+        }
+    }
+}

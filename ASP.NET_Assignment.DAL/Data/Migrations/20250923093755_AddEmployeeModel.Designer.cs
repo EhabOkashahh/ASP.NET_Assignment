@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASP.NET_Assignment.DAL.Data.Migrations
 {
     [DbContext(typeof(AssignmentDbContext))]
-    [Migration("20250923083032_Add Department")]
-    partial class AddDepartment
+    [Migration("20250923093755_AddEmployeeModel")]
+    partial class AddEmployeeModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,8 +64,8 @@ namespace ASP.NET_Assignment.DAL.Data.Migrations
                     b.Property<int?>("Age")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("CraetionDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("DateOfCreation")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()

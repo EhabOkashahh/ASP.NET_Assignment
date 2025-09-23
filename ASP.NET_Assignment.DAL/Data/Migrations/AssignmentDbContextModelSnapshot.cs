@@ -61,8 +61,8 @@ namespace ASP.NET_Assignment.DAL.Data.Migrations
                     b.Property<int?>("Age")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("CraetionDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("DateOfCreation")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
