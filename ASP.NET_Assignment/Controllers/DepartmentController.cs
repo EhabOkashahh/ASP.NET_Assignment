@@ -21,6 +21,12 @@ namespace ASP.NET.Assignment.PL.Controllers
         public IActionResult Index()
         {
             var departments = _repository.GetAll();
+            ////Dictionary: => Transfer Extra Information From Controller to view
+            //// 1.ViewData
+            //ViewData["Message"] = "Hello From ViewData";
+            //// 2.ViewBag
+            //ViewBag.Message = "Message from View Bag";
+            //// 2.TempData
             return View(departments);
         }
         [HttpGet]
@@ -41,6 +47,7 @@ namespace ASP.NET.Assignment.PL.Controllers
                 var state = _repository.Add(department);
                 if (state > 0)
                 {
+                    TempData["Message"] = $"{department.Name} Department is Successfully Created ";
                     return RedirectToAction(nameof(Index));
                 }
             }
