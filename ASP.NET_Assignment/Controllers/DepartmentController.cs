@@ -47,7 +47,7 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View(createDepartmentDto);
         }
 
-        public IActionResult Details(int? id)
+        public IActionResult Details(int? id , string ViewName = "Details")
         {
             if (id is null) return BadRequest("Invalid Id");
 
@@ -60,13 +60,13 @@ namespace ASP.NET.Assignment.PL.Controllers
                 DateOfCreation= department.DateOfCreation,
             };
             ViewBag.Id = id.Value;
-            return View(createDepartmentDto);
+            return View(ViewName,createDepartmentDto);
         }
 
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            return Details(id);
+            return Details(id,"Edit");
         }
             [HttpPost]
         public IActionResult Edit(int? id , CreateDepartmentDto createDepartmentDto) {
