@@ -20,11 +20,16 @@ namespace ASP.NET.Assignment.PL.Controllers
             _departmentRepository = departmentRepository;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? SearchText)
         {
-            var Employees = _repositroy.GetAll();
+            IEnumerable<Employee> Employees;
+
+            if (String.IsNullOrEmpty(SearchText)) Employees = _repositroy.GetAll();
+            else Employees = _repositroy.GetByName(SearchText);
+
             return View(Employees);
         }
+        
         [HttpGet]
         public IActionResult Create()
         {

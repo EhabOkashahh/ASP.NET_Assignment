@@ -9,5 +9,6 @@ namespace ASP.NET_Assignment.BLL.Interfaces
 {
     public interface IEmployeeRepositroy : IMainRepository<Employee>
     {
+        IEnumerable<Employee> GetByName(string Text);
     }
 }

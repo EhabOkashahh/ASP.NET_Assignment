@@ -1,4 +1,19 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿
 
-// Write your JavaScript code.
+var InputValue = document.getElementById("txt")
+
+
+InputValue.addEventListener("keyup", () => {
+    let xhr = new XMLHttpRequest();
+    let url = `https://localhost:44375/Employees?SearchText=${InputValue.value}`;
+
+    xhr.open("GET", url, true);
+
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            
+        }
+    }
+    xhr.send();
+
+})

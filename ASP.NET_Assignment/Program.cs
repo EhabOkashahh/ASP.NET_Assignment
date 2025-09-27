@@ -19,6 +19,12 @@ namespace ASP.NET_Assignment
             builder.Services.AddDbContext<AssignmentDbContext>(
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))); // Allow DI for AssignmentDbContext
 
+
+            //builder.Services.AddScoped    => Create Object Life Time Per Request   then will be unreachable object
+            //builder.Services.AddTransient => Create Object Life Time Per Operation   then will be unreachable object
+            //builder.Services.AddSingleton => Create Object Life Time Per Applecation   then will be unreachable object
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
