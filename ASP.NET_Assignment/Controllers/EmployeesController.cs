@@ -3,6 +3,7 @@ using ASP.NET_Assignment.BLL.Interfaces;
 using ASP.NET_Assignment.BLL.Repositories;
 using ASP.NET_Assignment.DAL.Models;
 using AspNetCoreGeneratedDocument;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.CodeDom;
 using System.Threading.Tasks;
@@ -13,11 +14,13 @@ namespace ASP.NET.Assignment.PL.Controllers
     {
         private readonly IEmployeeRepositroy _repositroy;
         private readonly IDepartmentRepository _departmentRepository;
+        private readonly IMapper _Mapper;
 
-        public EmployeesController(IEmployeeRepositroy employeeRepository, IDepartmentRepository departmentRepository)
+        public EmployeesController(IEmployeeRepositroy employeeRepository, IDepartmentRepository departmentRepository,IMapper mapper)
         {
             _repositroy = employeeRepository;
             _departmentRepository = departmentRepository;
+            _Mapper = mapper;
         }
 
         public IActionResult Index(string? SearchText)
@@ -44,20 +47,8 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             if (ModelState.IsValid)
             {
-                Employee employee = new Employee()
-                {
-                    Name = createEmployeeDTO.Name,
-                    Address = createEmployeeDTO.Address,
-                    Age = createEmployeeDTO.Age,
-                    DateOfCreation = createEmployeeDTO.DateOfCreation,
-                    Email = createEmployeeDTO.Email,
-                    HireDate = createEmployeeDTO.HireDate,
-                    IsActive = createEmployeeDTO.IsActive,
-                    IsDeleted = createEmployeeDTO.IsDeleted,
-                    Phone = createEmployeeDTO.Phone,
-                    Salary = createEmployeeDTO.Salary,
-                    DepartmentId = createEmployeeDTO.DepartmentId
-                };
+               
+                var employee = _Mapper.Map<Employee>(createEmployeeDTO);
                 var count = _repositroy.Add(employee);
                 if (count > 0)
                 {
@@ -72,23 +63,10 @@ namespace ASP.NET.Assignment.PL.Controllers
             var Departments = _departmentRepository.GetAll();
             ViewData["Departments"] = Departments;
             var Employee = _repositroy.Get(id.Value);
+            var employee = _Mapper.Map<CreateEmployeeDTO>(Employee);
 
-            CreateEmployeeDTO EmployeeDTO = new CreateEmployeeDTO()
-            {
-                Name = Employee.Name,
-                Address = Employee.Address,
-                Age = Employee.Age,
-                DateOfCreation = Employee.DateOfCreation,
-                Email = Employee.Email,
-                HireDate = Employee.HireDate,
-                IsActive = Employee.IsActive,
-                IsDeleted = Employee.IsDeleted,
-                Phone = Employee.Phone,
-                Salary = Employee.Salary,
-                DepartmentId = Employee.DepartmentId
-            };
             ViewData["Id"] = id.Value;
-            return View(EmployeeDTO);
+            return View(employee);
         }
         [HttpGet]
         public IActionResult Edit(int? id)
@@ -103,22 +81,10 @@ namespace ASP.NET.Assignment.PL.Controllers
             {
                 var Departments = _departmentRepository.GetAll();
                 ViewData["Departments"] = Departments;
+                var oldemp = _repositroy.Get(id.Value);
 
-                Employee employee = new Employee()
-                {
-                    Id = id.Value,
-                    Name = createEmployeeDTO.Name,
-                    Address = createEmployeeDTO.Address,
-                    Age = createEmployeeDTO.Age,
-                    DateOfCreation = createEmployeeDTO.DateOfCreation,
-                    Email = createEmployeeDTO.Email,
-                    HireDate = createEmployeeDTO.HireDate,
-                    IsActive = createEmployeeDTO.IsActive,
-                    IsDeleted = createEmployeeDTO.IsDeleted,
-                    Phone = createEmployeeDTO.Phone,
-                    Salary = createEmployeeDTO.Salary,
-                    DepartmentId = createEmployeeDTO.DepartmentId
-                };
+               var employee = _Mapper.Map(createEmployeeDTO , oldemp);
+
                 var count = _repositroy.Update(employee);
                 if (count > 0)
                 {

@@ -1,3 +1,4 @@
+using ASP.NET.Assignment.PL.Mapper;
 using ASP.NET_Assignment.BLL.Interfaces;
 using ASP.NET_Assignment.BLL.Repositories;
 using ASP.NET_Assignment.DAL.Data.Contexts;
@@ -18,7 +19,7 @@ namespace ASP.NET_Assignment
             builder.Services.AddScoped<IEmployeeRepositroy, EmployeeRepository>(); // Allow DI for DepartmentRepository 
             builder.Services.AddDbContext<AssignmentDbContext>(
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))); // Allow DI for AssignmentDbContext
-
+            builder.Services.AddAutoMapper(M=>M.AddProfile(new EmployeeProfile()));
 
             //builder.Services.AddScoped    => Create Object Life Time Per Request   then will be unreachable object
             //builder.Services.AddTransient => Create Object Life Time Per Operation   then will be unreachable object
