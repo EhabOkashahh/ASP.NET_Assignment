@@ -2,6 +2,7 @@
 using ASP.NET_Assignment.BLL.Interfaces;
 using ASP.NET_Assignment.BLL.Repositories;
 using ASP.NET_Assignment.DAL.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -13,11 +14,13 @@ namespace ASP.NET.Assignment.PL.Controllers
     {
         private readonly IDepartmentRepository _repository;
         private readonly IEmployeeRepositroy _employeeRepositroy;
+        private readonly IMapper _mapper;
 
-        public DepartmentController(IDepartmentRepository departmentRepository , IEmployeeRepositroy employeeRepositroy)
+        public DepartmentController(IDepartmentRepository departmentRepository , IEmployeeRepositroy employeeRepositroy, IMapper mapper)
         {
             _repository = departmentRepository;
             _employeeRepositroy = employeeRepositroy;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -41,12 +44,7 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             if (ModelState.IsValid)
             {
-                Department department = new Department()
-                {
-                    Code = createDepartmentDto.Code,
-                    Name = createDepartmentDto.Name,
-                    DateOfCreation = createDepartmentDto.DateOfCreation,
-                };
+                var department = _mapper.Map<Department>(createDepartmentDto);
                 var state = _repository.Add(department);
                 if (state > 0)
                 {
@@ -66,12 +64,7 @@ namespace ASP.NET.Assignment.PL.Controllers
             ViewData["Employees"] = empleoyees;
             if (department is null) return NotFound(new {StatusCode = 404 , message = $"Dpeartment With Id {id} not found"});
 
-            CreateDepartmentDto createDepartmentDto = new CreateDepartmentDto()
-            {
-                Name = department.Name,
-                Code= department.Code,
-                DateOfCreation= department.DateOfCreation,
-            };
+            var createDepartmentDto = _mapper.Map<CreateDepartmentDto>(department);
 
             ViewBag.Id = id.Value;
             return View(createDepartmentDto);
@@ -84,14 +77,9 @@ namespace ASP.NET.Assignment.PL.Controllers
         }
             [HttpPost]
         public IActionResult Edit([FromRoute]int? id , CreateDepartmentDto createDepartmentDto) {
-            if (ModelState.IsValid) {  
-                Department department = new Department()
-                {
-                    Code = createDepartmentDto.Code,
-                    Name = createDepartmentDto.Name,
-                    DateOfCreation =createDepartmentDto.DateOfCreation,
-                    Id = id.Value
-                };
+            if (ModelState.IsValid) {
+                var olddept = _repository.Get(id.Value);
+                var department = _mapper.Map(createDepartmentDto, olddept);
                 _repository.Update(department);
                 return RedirectToAction(nameof(Index));
             }

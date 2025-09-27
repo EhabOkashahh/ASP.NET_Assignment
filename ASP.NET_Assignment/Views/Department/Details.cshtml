@@ -18,6 +18,7 @@
         <label asp-for="DateOfCreation" class="form-label">Create at</label>
         <input asp-for="DateOfCreation" class="form-control" readonly>
     </div>
+    <label>Employees</label>
     <div>
         @if (Employees.Where(E => E.DepartmentId == ViewBag.Id && E.IsActive && !E.IsDeleted).Count() > 0)
         {
