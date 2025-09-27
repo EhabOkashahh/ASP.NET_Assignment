@@ -12,9 +12,12 @@ namespace ASP.NET.Assignment.PL.Controllers
     public class DepartmentController : Controller
     {
         private readonly IDepartmentRepository _repository;
-        public DepartmentController(IDepartmentRepository departmentRepository)
+        private readonly IEmployeeRepositroy _employeeRepositroy;
+
+        public DepartmentController(IDepartmentRepository departmentRepository , IEmployeeRepositroy employeeRepositroy)
         {
             _repository = departmentRepository;
+            _employeeRepositroy = employeeRepositroy;
         }
 
         [HttpGet]
@@ -54,29 +57,33 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View(createDepartmentDto);
         }
 
-        public IActionResult Details(int? id , string ViewName = "Details")
+        public IActionResult Details(int? id)
         {
             if (id is null) return BadRequest("Invalid Id");
 
             var department = _repository.Get(id.Value);
+            var empleoyees = _employeeRepositroy.GetAll();
+            ViewData["Employees"] = empleoyees;
             if (department is null) return NotFound(new {StatusCode = 404 , message = $"Dpeartment With Id {id} not found"});
+
             CreateDepartmentDto createDepartmentDto = new CreateDepartmentDto()
             {
                 Name = department.Name,
                 Code= department.Code,
                 DateOfCreation= department.DateOfCreation,
             };
+
             ViewBag.Id = id.Value;
-            return View(ViewName,createDepartmentDto);
+            return View(createDepartmentDto);
         }
 
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            return Details(id,"Edit");
+            return Details(id.Value);
         }
             [HttpPost]
-        public IActionResult Edit(int? id , CreateDepartmentDto createDepartmentDto) {
+        public IActionResult Edit([FromRoute]int? id , CreateDepartmentDto createDepartmentDto) {
             if (ModelState.IsValid) {  
                 Department department = new Department()
                 {
@@ -86,10 +93,9 @@ namespace ASP.NET.Assignment.PL.Controllers
                     Id = id.Value
                 };
                 _repository.Update(department);
-                return RedirectToAction(nameof(Details) , new {id = id.Value});
+                return RedirectToAction(nameof(Index));
             }
-            ViewBag.Id = id.Value;
-            return View(createDepartmentDto);
+            return RedirectToAction(nameof(Index));
         }
         public IActionResult Delete()
         {
@@ -101,33 +107,10 @@ namespace ASP.NET.Assignment.PL.Controllers
             var res = _repository.Delete(department);
             if(res > 0)
             {
-                return View("DeletionSuccess");
+                return View("Models/DeletionSuccess");
             }
-            return View("DeletionUnSuccess");
+            return View("Models/DeletionUnSuccess");
         }
 
-        public IActionResult Update(int? id)
-        {
-            return Edit(id.Value);
-        }
-
-        [HttpPost]
-        public IActionResult Update([FromRoute]int? id , CreateDepartmentDto createDepartmentDto)
-        {
-            if (ModelState.IsValid)
-            {
-            Department department = new Department()
-            {
-                Code = createDepartmentDto.Code,
-                Name = createDepartmentDto.Name,
-                DateOfCreation = createDepartmentDto.DateOfCreation,
-                Id = id.Value
-            };
-                _repository.Update(department);
-                return RedirectToAction(nameof(Index));
-            }
-            ViewBag.Id = id.Value;
-            return View(createDepartmentDto);
-        }
     }
 }

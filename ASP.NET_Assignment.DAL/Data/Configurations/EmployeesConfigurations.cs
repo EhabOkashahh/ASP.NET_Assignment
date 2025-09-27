@@ -15,6 +15,8 @@ namespace ASP.NET_Assignment.DAL.Data.Configurations
         {
             builder.Property(E => E.Salary).HasColumnType("decimal(18,2)");
             builder.Property(E=>E.Id).UseIdentityColumn(10,10);
+
+            builder.HasOne(E=>E.Department).WithMany(D=>D.Employees).HasForeignKey(E => E.DepartmentId).OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

@@ -21,11 +21,18 @@ namespace ASP.NET_Assignment.BLL.Repositories
 
         public IEnumerable<T> GetAll()
         {
-            return _context.Set<T>().ToList();
+            if (typeof(T) == typeof(Employee))
+            {
+                return (IEnumerable<T>)_context.Set<Employee>().Include(E => E.Department).ToList();
+            }
+            return  _context.Set<T>().ToList();
         }
         public T? Get(int id)
         {
-
+            if (typeof(T) == typeof(Employee))
+            {
+                return _context.Employees.Include(E=>E.Department).FirstOrDefault(E=>E.Id == id) as T; 
+            }
             return _context.Set<T>().Find(id);
         }
 
@@ -38,12 +45,6 @@ namespace ASP.NET_Assignment.BLL.Repositories
         {
             var old = Get(model.Id);
             _context.Entry(old).CurrentValues.SetValues(model);
-
-            if (!_context.Entry(old).State.HasFlag(EntityState.Modified))
-            {
-                return 0;
-            }
-
             return _context.SaveChanges();
 
 

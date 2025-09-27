@@ -32,5 +32,7 @@ namespace ASP.NET.Assignment.PL.DTOs
 
         [Required(ErrorMessage = "Date of creation is required!")]
         public DateTime DateOfCreation { get; set; }
+
+        public  int? DepartmentId { get; set; }
     }
 }

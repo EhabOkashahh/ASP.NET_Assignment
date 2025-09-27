@@ -1,6 +1,8 @@
 ﻿@model CreateEmployeeDTO
+
 @{
     ViewData["Title"] = "Edit";
+
 }
 
 <h1>Edit Page</h1>
@@ -10,7 +12,7 @@
 
 
     <button type="submit" class="btn btn-primary mt-2">Submit</button>
-    <a class="btn btn-light mt-2" asp-action="Details" asp-route-id="@ViewBag.Id">Back To List</a>
+    <a class="btn btn-light mt-2" asp-action="Index">Back To List</a>
 </form>
 @section ValidationSection {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>

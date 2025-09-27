@@ -12,9 +12,12 @@ namespace ASP.NET.Assignment.PL.Controllers
     public class EmployeesController : Controller
     {
         private readonly IEmployeeRepositroy _repositroy;
-        public EmployeesController(IEmployeeRepositroy employeeRepository)
+        private readonly IDepartmentRepository _departmentRepository;
+
+        public EmployeesController(IEmployeeRepositroy employeeRepository, IDepartmentRepository departmentRepository)
         {
             _repositroy = employeeRepository;
+            _departmentRepository = departmentRepository;
         }
 
         public IActionResult Index()
@@ -23,27 +26,32 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View(Employees);
         }
         [HttpGet]
-        public IActionResult Create() {
-
+        public IActionResult Create()
+        {
+            var Departments = _departmentRepository.GetAll();
+            ViewData["Departments"] = Departments;
             return View();
         }
+
         [HttpPost]
-        public IActionResult Create(CreateEmployeeDTO createEmployeeDTO) {
+        public IActionResult Create(CreateEmployeeDTO createEmployeeDTO)
+        {
 
             if (ModelState.IsValid)
             {
                 Employee employee = new Employee()
                 {
-                    Age = createEmployeeDTO.Age,
+                    Name = createEmployeeDTO.Name,
                     Address = createEmployeeDTO.Address,
+                    Age = createEmployeeDTO.Age,
                     DateOfCreation = createEmployeeDTO.DateOfCreation,
                     Email = createEmployeeDTO.Email,
                     HireDate = createEmployeeDTO.HireDate,
                     IsActive = createEmployeeDTO.IsActive,
                     IsDeleted = createEmployeeDTO.IsDeleted,
-                    Name = createEmployeeDTO.Name,
                     Phone = createEmployeeDTO.Phone,
                     Salary = createEmployeeDTO.Salary,
+                    DepartmentId = createEmployeeDTO.DepartmentId
                 };
                 var count = _repositroy.Add(employee);
                 if (count > 0)
@@ -56,59 +64,68 @@ namespace ASP.NET.Assignment.PL.Controllers
 
         public IActionResult Details(int? id)
         {
+            var Departments = _departmentRepository.GetAll();
+            ViewData["Departments"] = Departments;
             var Employee = _repositroy.Get(id.Value);
-            return View(Employee);
-        }
-        [HttpGet]
-        public IActionResult Edit(int? id)
-        {
-            var Employee = _repositroy.Get(id.Value);
-            CreateEmployeeDTO createDepartmentDto = new CreateEmployeeDTO()
+
+            CreateEmployeeDTO EmployeeDTO = new CreateEmployeeDTO()
             {
-                Age = Employee.Age,
+                Name = Employee.Name,
                 Address = Employee.Address,
+                Age = Employee.Age,
                 DateOfCreation = Employee.DateOfCreation,
                 Email = Employee.Email,
                 HireDate = Employee.HireDate,
                 IsActive = Employee.IsActive,
                 IsDeleted = Employee.IsDeleted,
-                Name = Employee.Name,
                 Phone = Employee.Phone,
                 Salary = Employee.Salary,
+                DepartmentId = Employee.DepartmentId
             };
-            ViewBag.Id = id.Value;
-            return View(createDepartmentDto);
+            ViewData["Id"] = id.Value;
+            return View(EmployeeDTO);
         }
-        [HttpPost]
-        public IActionResult Edit([FromRoute] int? id, CreateEmployeeDTO createEmployeeDTO)
+        [HttpGet]
+        public IActionResult Edit(int? id)
         {
-            if (ModelState.IsValid) {
+            return Details(id.Value);
+        }
+
+        [HttpPost]
+        public IActionResult Edit([FromRoute] int? id , CreateEmployeeDTO createEmployeeDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                var Departments = _departmentRepository.GetAll();
+                ViewData["Departments"] = Departments;
+
                 Employee employee = new Employee()
                 {
                     Id = id.Value,
-                    Age = createEmployeeDTO.Age,
+                    Name = createEmployeeDTO.Name,
                     Address = createEmployeeDTO.Address,
+                    Age = createEmployeeDTO.Age,
                     DateOfCreation = createEmployeeDTO.DateOfCreation,
                     Email = createEmployeeDTO.Email,
                     HireDate = createEmployeeDTO.HireDate,
                     IsActive = createEmployeeDTO.IsActive,
                     IsDeleted = createEmployeeDTO.IsDeleted,
-                    Name = createEmployeeDTO.Name,
                     Phone = createEmployeeDTO.Phone,
                     Salary = createEmployeeDTO.Salary,
+                    DepartmentId = createEmployeeDTO.DepartmentId
                 };
-
-                var res = _repositroy.Update(employee);
-                if (res >= 0) return RedirectToAction(nameof(Details), new { id = id.Value });
-                else BadRequest("Something Wrong Happen");
+                var count = _repositroy.Update(employee);
+                if (count > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            ViewBag.Id = id.Value;
-            return View(createEmployeeDTO);
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete(int? id) {
-            var employee = _repositroy.Get(id.Value);
-            return View(employee);
+        public IActionResult Delete([FromRoute] int? id)
+        {
+            return View();
         }
 
         [HttpPost]
@@ -149,38 +166,7 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View("Delete");
         }
 
-        public IActionResult Update(int? id)
-        {
-            return Edit(id.Value);
-        }
 
-        [HttpPost]
-        public IActionResult Update([FromRoute] int? id, CreateEmployeeDTO createEmployeeDTO)
-        {
-            if (ModelState.IsValid)
-            {
-                Employee employee = new Employee()
-                {
-                    Id = id.Value,
-                    Age = createEmployeeDTO.Age,
-                    Address = createEmployeeDTO.Address,
-                    DateOfCreation = createEmployeeDTO.DateOfCreation,
-                    Email = createEmployeeDTO.Email,
-                    HireDate = createEmployeeDTO.HireDate,
-                    IsActive = createEmployeeDTO.IsActive,
-                    IsDeleted = createEmployeeDTO.IsDeleted,
-                    Name = createEmployeeDTO.Name,
-                    Phone = createEmployeeDTO.Phone,
-                    Salary = createEmployeeDTO.Salary,
-                };
 
-                var res = _repositroy.Update(employee);
-                if (res >= 0) return RedirectToAction(nameof(Index));
-                else BadRequest("Something Wrong Happen");
-            }
-            ViewBag.Id = id.Value;
-            return View(createEmployeeDTO);
-        }
     }
-
 }

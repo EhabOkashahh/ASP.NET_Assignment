@@ -9,5 +9,7 @@ namespace ASP.NET_Assignment.DAL.Models
     public class Department : BaseModel
     {
         public string Code { get; set; }
+
+        public ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();
     }
 }

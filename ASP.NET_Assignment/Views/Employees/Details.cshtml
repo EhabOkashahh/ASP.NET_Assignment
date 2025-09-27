@@ -1,7 +1,9 @@
-﻿@model Employee
+﻿@model CreateEmployeeDTO
 @{
-    ViewData["Title"] = "Details";
+
+    var departments = new SelectList(ViewData["Departments"] as IEnumerable<Department>, "Id", "Name");
 }
+
 
 <h1>Details Page</h1>
 
@@ -56,6 +58,12 @@
         <input asp-for="DateOfCreation" class="form-control" type="datetime-local" readonly>
     </div>
 
-    <a asp-action="Edit" asp-route-id="@Model.Id" "type="submit" class="btn btn-warning mt-2">Edit</a>
+<div>
+    <label asp-for="@Model.DepartmentId"></label>
+    <select class="form-select" asp-for="@Model.DepartmentId" asp-items="departments" disabled>
+        <option value=@null>-- Select Department --</option>
+    </select>
+</div>
+    <a asp-action="Edit" asp-route-id="@ViewData["Id"] "type="submit" class="btn btn-warning mt-2">Edit</a>
     <a class="btn btn-light mt-2" asp-action="Index">Back To List</a>
 </div>  

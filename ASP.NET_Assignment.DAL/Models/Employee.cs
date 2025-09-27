@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,5 +17,9 @@ namespace ASP.NET_Assignment.DAL.Models
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public DateOnly HireDate { get; set; }
+
+        [DisplayName("Department")]
+        public int? DepartmentId { get; set; }
+        public Department Department { get; set; }
     }
 }

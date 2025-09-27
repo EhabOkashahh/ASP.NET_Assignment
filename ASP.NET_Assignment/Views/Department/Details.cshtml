@@ -1,6 +1,7 @@
 ﻿@model CreateDepartmentDto
 @{
     ViewData["Title"] = "Details";
+    var Employees = ViewData["Employees"] as IEnumerable<Employee>;
 }
 
 <h1 class="mb-5">Details Page</h1>
@@ -17,7 +18,65 @@
         <label asp-for="DateOfCreation" class="form-label">Create at</label>
         <input asp-for="DateOfCreation" class="form-control" readonly>
     </div>
+    <div>
+        @if (Employees.Where(E => E.DepartmentId == ViewBag.Id && E.IsActive && !E.IsDeleted).Count() > 0)
+        {
+            <table class="table table-hover table-striped" >
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Salary</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Is Active</th>
+                        <th>Is Deleted</th>
+                        <th>Hire Date</th>
+                        <th>Date Of Creation</th>
+                        <th>Department Name</th>
+                    </tr>
 
+                </thead>
+                <tbody>
+                    @foreach (var item in Employees)
+                    {
+                        if (item.DepartmentId == @ViewBag.Id && item.IsActive && !item.IsDeleted){
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Name</td>
+                                <td>@item.Age</td>
+                                <td>@item.Salary</td>
+                                <td>@item.Address</td>
+                                <td>@item.Phone</td>
+                                <td>@item.Email</td>
+                                <td>@item.IsActive</td>
+                                <td>@item.IsDeleted</td>
+                                <td>@item.HireDate</td>
+                                <td>@item.DateOfCreation</td>
+                                @if (item.Department is not null)
+                                {
+                                    <td>@item.Department.Name</td>
+                                }
+                                else
+                                {
+                                    <td>No Department</td>
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <h4>There are no Employee Work on this department at this moment</h4>
+            </div>
+        }
+
+    </div>
     <a class="btn btn-warning mt-2" asp-route-id ="@ViewBag.Id" asp-action="Edit">Edit</a>
     <a class="btn btn-light mt-2" asp-action="index" asp-controller="Department">Back To List</a>
 </form>
