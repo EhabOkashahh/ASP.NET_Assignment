@@ -32,7 +32,6 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             return View(Employees);
         }
-        
         [HttpGet]
         public IActionResult Create()
         {
