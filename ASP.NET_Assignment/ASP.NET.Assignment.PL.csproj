@@ -19,8 +19,4 @@
     <ProjectReference Include="..\ASP.NET_Assignment.BLL\ASP.NET_Assignment.BLL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\Files\Images\" />
-  </ItemGroup>
-
 </Project>

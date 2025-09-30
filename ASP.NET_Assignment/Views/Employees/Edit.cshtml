@@ -7,10 +7,10 @@
 
 <h1>Edit Page</h1>
 
-<form asp-action="Edit" asp-route-id="@ViewData["Id"]">
+<form asp-action="Edit" enctype="multipart/form-data" asp-route-id="@ViewData["Id"]">
     <partial name="PartialViews/_EmployeeFormsViews" />
 
-
+    <input asp-for="ImageName" hidden />
     <button type="submit" class="btn btn-primary mt-2">Submit</button>
     <a class="btn btn-light mt-2" asp-action="Index">Back To List</a>
 </form>

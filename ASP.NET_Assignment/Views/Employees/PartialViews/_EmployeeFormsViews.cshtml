@@ -64,6 +64,13 @@
     <span asp-validation-for="DateOfCreation" class="text-danger"></span>
 </div>
 
+<div class="mb-3">
+    <label asp-for="Image" class="form-label">Upload Image</label>
+    <input asp-for="Image" class="form-control" type="file">
+    <span asp-validation-for="Image" class="text-danger"></span>
+</div>
+
+
 <div>
     <label asp-for="@Model.DepartmentId"></label>
     <select class="form-select" asp-for="@Model.DepartmentId" asp-items="Departments">

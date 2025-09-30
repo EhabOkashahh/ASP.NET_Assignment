@@ -1,10 +1,12 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
+using ASP.NET.Assignment.PL.Helpers;
 using ASP.NET_Assignment.BLL.Interfaces;
 using ASP.NET_Assignment.BLL.Repositories;
 using ASP.NET_Assignment.DAL.Models;
 using AspNetCoreGeneratedDocument;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.CodeDom;
 using System.Threading.Tasks;
 
@@ -44,8 +46,12 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             if (ModelState.IsValid)
             {
-               
-                var employee = _Mapper.Map<Employee>(createEmployeeDTO);
+             
+                if(createEmployeeDTO.Image is not null)
+                {
+                    createEmployeeDTO.ImageName = AttachmentsSettings.Upload(createEmployeeDTO.Image);
+                }
+                 var employee = _Mapper.Map<Employee>(createEmployeeDTO);
                  _unitOfWork.EmployeeRepositroy.Value.Add(employee);
                 var count = _unitOfWork.ApplyToDB();
                 if (count > 0)
@@ -77,11 +83,21 @@ namespace ASP.NET.Assignment.PL.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(createEmployeeDTO.ImageName is not null)
+                {
+                    AttachmentsSettings.Delete(createEmployeeDTO.ImageName);
+                }
+                if(createEmployeeDTO.Image is not null)
+                {
+
+                    createEmployeeDTO.ImageName = AttachmentsSettings.Upload(createEmployeeDTO.Image);
+                }
+
                 var Departments = _unitOfWork.DepartmentRepository.Value.GetAll();
                 ViewData["Departments"] = Departments;
                 var oldemp = _unitOfWork.EmployeeRepositroy.Value.Get(id.Value);
 
-               var employee = _Mapper.Map(createEmployeeDTO , oldemp);
+                var employee = _Mapper.Map(createEmployeeDTO, oldemp);
 
                 _unitOfWork.EmployeeRepositroy.Value.Update(employee);
                 _unitOfWork.ApplyToDB();
