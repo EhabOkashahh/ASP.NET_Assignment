@@ -34,5 +34,10 @@ namespace ASP.NET.Assignment.PL.DTOs
         public DateTime DateOfCreation { get; set; }
 
         public  int? DepartmentId { get; set; }
+
+        public string? ImageName { get; set; }
+
+        public IFormFile? Image { get; set; }
+
     }
 }
