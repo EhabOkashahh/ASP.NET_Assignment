@@ -12,14 +12,12 @@ namespace ASP.NET.Assignment.PL.Controllers
 {
     public class EmployeesController : Controller
     {
-        private readonly IEmployeeRepositroy _repositroy;
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _Mapper;
 
-        public EmployeesController(IEmployeeRepositroy employeeRepository, IDepartmentRepository departmentRepository,IMapper mapper)
+        public EmployeesController(IUnitOfWork unitOfWork,IMapper mapper)
         {
-            _repositroy = employeeRepository;
-            _departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork;
             _Mapper = mapper;
         }
 
@@ -27,15 +25,15 @@ namespace ASP.NET.Assignment.PL.Controllers
         {
             IEnumerable<Employee> Employees;
 
-            if (String.IsNullOrEmpty(SearchText)) Employees = _repositroy.GetAll();
-            else Employees = _repositroy.GetByName(SearchText);
+            if (String.IsNullOrEmpty(SearchText)) Employees = _unitOfWork.EmployeeRepositroy.Value.GetAll();
+            else Employees = _unitOfWork.EmployeeRepositroy.Value.GetByName(SearchText);
 
             return View(Employees);
         }
         [HttpGet]
         public IActionResult Create()
         {
-            var Departments = _departmentRepository.GetAll();
+            var Departments = _unitOfWork.DepartmentRepository.Value.GetAll();
             ViewData["Departments"] = Departments;
             return View();
         }
@@ -48,7 +46,8 @@ namespace ASP.NET.Assignment.PL.Controllers
             {
                
                 var employee = _Mapper.Map<Employee>(createEmployeeDTO);
-                var count = _repositroy.Add(employee);
+                 _unitOfWork.EmployeeRepositroy.Value.Add(employee);
+                var count = _unitOfWork.ApplyToDB();
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -59,9 +58,9 @@ namespace ASP.NET.Assignment.PL.Controllers
 
         public IActionResult Details(int? id)
         {
-            var Departments = _departmentRepository.GetAll();
+            var Departments = _unitOfWork.DepartmentRepository.Value.GetAll();
             ViewData["Departments"] = Departments;
-            var Employee = _repositroy.Get(id.Value);
+            var Employee = _unitOfWork.EmployeeRepositroy.Value.Get(id.Value);
             var employee = _Mapper.Map<CreateEmployeeDTO>(Employee);
 
             ViewData["Id"] = id.Value;
@@ -78,17 +77,14 @@ namespace ASP.NET.Assignment.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                var Departments = _departmentRepository.GetAll();
+                var Departments = _unitOfWork.DepartmentRepository.Value.GetAll();
                 ViewData["Departments"] = Departments;
-                var oldemp = _repositroy.Get(id.Value);
+                var oldemp = _unitOfWork.EmployeeRepositroy.Value.Get(id.Value);
 
                var employee = _Mapper.Map(createEmployeeDTO , oldemp);
 
-                var count = _repositroy.Update(employee);
-                if (count > 0)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
+                _unitOfWork.EmployeeRepositroy.Value.Update(employee);
+                _unitOfWork.ApplyToDB();
             }
             return RedirectToAction(nameof(Index));
         }
@@ -99,11 +95,11 @@ namespace ASP.NET.Assignment.PL.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(int? id, string deleteOption)
+        public IActionResult Delete(int? id, string deleteOption)
         {
 
 
-            var employee = _repositroy.Get(id.Value);
+            var employee = _unitOfWork.EmployeeRepositroy.Value.Get(id.Value);
 
 
             if (deleteOption == "1")
@@ -111,8 +107,13 @@ namespace ASP.NET.Assignment.PL.Controllers
                 if (employee.IsActive)
                 {
                     employee.IsActive = false;
-                    _repositroy.Update(employee);
-                    return RedirectToAction(nameof(Index));
+                    _unitOfWork.EmployeeRepositroy.Value.Update(employee);
+                    var count = _unitOfWork.ApplyToDB();
+                    if(count > 0) return RedirectToAction(nameof(Index));
+                    {
+                        ViewBag.ErrorMessage = "Something Wrong Happend";
+                        return Delete(id);
+                    }
                 }
                 else
                 {
@@ -124,19 +125,23 @@ namespace ASP.NET.Assignment.PL.Controllers
                 if (!employee.IsDeleted)
                 {
                     employee.IsDeleted = true;
-                    _repositroy.Update(employee);
-                    return RedirectToAction(nameof(Index));
+                    _unitOfWork.EmployeeRepositroy.Value.Update(employee);
+                    var count = _unitOfWork.ApplyToDB();
+                    if (count > 0) return RedirectToAction(nameof(Index));
+                    {
+                        ViewBag.ErrorMessage = "Something Wrong Happend";
+                        return Delete(id);
+                    }
                 }
                 else
                 {
                     ViewBag.ErrorMessage = "This employee is already deleted.";
                 }
             }
+            else ViewBag.ErrorMessage = "Please Choose Deletion Method.";
 
             return View("Delete");
         }
-
-
 
     }
 }

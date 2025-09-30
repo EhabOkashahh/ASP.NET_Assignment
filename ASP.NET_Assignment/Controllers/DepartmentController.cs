@@ -12,21 +12,19 @@ namespace ASP.NET.Assignment.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository _repository;
-        private readonly IEmployeeRepositroy _employeeRepositroy;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public DepartmentController(IDepartmentRepository departmentRepository , IEmployeeRepositroy employeeRepositroy, IMapper mapper)
+        public DepartmentController(IUnitOfWork unitOfWork , IMapper mapper)
         {
-            _repository = departmentRepository;
-            _employeeRepositroy = employeeRepositroy;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            var departments = _repository.GetAll();
+            var departments = _unitOfWork.DepartmentRepository.Value.GetAll();
             ////Dictionary: => Transfer Extra Information From Controller to view
             //// 1.ViewData
             //ViewData["Message"] = "Hello From ViewData";
@@ -45,7 +43,8 @@ namespace ASP.NET.Assignment.PL.Controllers
             if (ModelState.IsValid)
             {
                 var department = _mapper.Map<Department>(createDepartmentDto);
-                var state = _repository.Add(department);
+                 _unitOfWork.DepartmentRepository.Value.Add(department);
+                var state = _unitOfWork.ApplyToDB();
                 if (state > 0)
                 {
                     TempData["Message"] = $"{department.Name} Department is Successfully Created ";
@@ -59,8 +58,8 @@ namespace ASP.NET.Assignment.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var department = _repository.Get(id.Value);
-            var empleoyees = _employeeRepositroy.GetAll();
+            var department = _unitOfWork.DepartmentRepository.Value.Get(id.Value);
+            var empleoyees = _unitOfWork.EmployeeRepositroy.Value.GetAll();
             ViewData["Employees"] = empleoyees;
             if (department is null) return NotFound(new {StatusCode = 404 , message = $"Dpeartment With Id {id} not found"});
 
@@ -78,10 +77,10 @@ namespace ASP.NET.Assignment.PL.Controllers
             [HttpPost]
         public IActionResult Edit([FromRoute]int? id , CreateDepartmentDto createDepartmentDto) {
             if (ModelState.IsValid) {
-                var olddept = _repository.Get(id.Value);
+                var olddept = _unitOfWork.DepartmentRepository.Value.Get(id.Value);
                 var department = _mapper.Map(createDepartmentDto, olddept);
-                _repository.Update(department);
-                return RedirectToAction(nameof(Index));
+                _unitOfWork.DepartmentRepository.Value.Update(department);
+                var state = _unitOfWork.ApplyToDB();
             }
             return RedirectToAction(nameof(Index));
         }
@@ -91,14 +90,14 @@ namespace ASP.NET.Assignment.PL.Controllers
         }
         [HttpPost]
         public IActionResult Delete(int? id) {
-            var department = _repository.Get(id.Value);
-            var res = _repository.Delete(department);
-            if(res > 0)
+            var department = _unitOfWork.DepartmentRepository.Value.Get(id.Value);
+             _unitOfWork.DepartmentRepository.Value.Delete(department);
+            var res = _unitOfWork.ApplyToDB();
+            if (res > 0)
             {
                 return View("Models/DeletionSuccess");
             }
             return View("Models/DeletionUnSuccess");
         }
-
     }
 }
