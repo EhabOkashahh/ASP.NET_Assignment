@@ -9,10 +9,10 @@ namespace ASP.NET_Assignment.BLL.Interfaces
 {
     public interface IMainRepository<T> where T : BaseModel
     {
-        IEnumerable<T> GetAll();
-        T? Get(int id);
-        void Add(T model);
-        void Update(T model);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T?> GetAsync(int id);
+        Task AddAsync(T model);
+        Task Update(T model);
         void Delete(T model);
     }
 }

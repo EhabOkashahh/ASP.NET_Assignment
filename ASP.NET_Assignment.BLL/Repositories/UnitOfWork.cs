@@ -29,7 +29,7 @@ namespace ASP.NET_Assignment.BLL.Repositories
             
         }
 
-        public int ApplyToDB()
+        public async Task<int> ApplyToDB()
         {
             return _context.SaveChanges();
         }

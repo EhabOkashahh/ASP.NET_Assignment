@@ -10,6 +10,6 @@ namespace ASP.NET_Assignment.BLL.Interfaces
     {
          Lazy<IDepartmentRepository> DepartmentRepository { get;}
          Lazy<IEmployeeRepositroy> EmployeeRepositroy { get;}
-        public int ApplyToDB();
+        public Task<int> ApplyToDB();
     }
 }

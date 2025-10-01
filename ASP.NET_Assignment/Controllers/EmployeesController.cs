@@ -23,25 +23,25 @@ namespace ASP.NET.Assignment.PL.Controllers
             _Mapper = mapper;
         }
 
-        public IActionResult Index(string? SearchText)
+        public async Task<IActionResult> Index(string? SearchText)
         {
             IEnumerable<Employee> Employees;
 
-            if (String.IsNullOrEmpty(SearchText)) Employees = _unitOfWork.EmployeeRepositroy.Value.GetAll();
-            else Employees = _unitOfWork.EmployeeRepositroy.Value.GetByName(SearchText);
+            if (String.IsNullOrEmpty(SearchText)) Employees = await _unitOfWork.EmployeeRepositroy.Value.GetAllAsync();
+            else Employees = await _unitOfWork.EmployeeRepositroy.Value.GetByNameAsync(SearchText);
 
             return View(Employees);
         }
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var Departments = _unitOfWork.DepartmentRepository.Value.GetAll();
+            var Departments = await _unitOfWork.DepartmentRepository.Value.GetAllAsync();
             ViewData["Departments"] = Departments;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(CreateEmployeeDTO createEmployeeDTO)
+        public async Task<IActionResult> Create(CreateEmployeeDTO createEmployeeDTO)
         {
 
             if (ModelState.IsValid)
@@ -52,9 +52,9 @@ namespace ASP.NET.Assignment.PL.Controllers
                     createEmployeeDTO.ImageName = AttachmentsSettings.Upload(createEmployeeDTO.Image);
                 }
                  var employee = _Mapper.Map<Employee>(createEmployeeDTO);
-                 _unitOfWork.EmployeeRepositroy.Value.Add(employee);
+                 await _unitOfWork.EmployeeRepositroy.Value.AddAsync(employee);
                 var count = _unitOfWork.ApplyToDB();
-                if (count > 0)
+                if (count.Result > 0)
                 {
                     return RedirectToAction(nameof(Index));
                 }
@@ -62,24 +62,24 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View(createEmployeeDTO);
         }
 
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
-            var Departments = _unitOfWork.DepartmentRepository.Value.GetAll();
+            var Departments = await _unitOfWork.DepartmentRepository.Value.GetAllAsync();
             ViewData["Departments"] = Departments;
-            var Employee = _unitOfWork.EmployeeRepositroy.Value.Get(id.Value);
+            var Employee = await _unitOfWork.EmployeeRepositroy.Value.GetAsync(id.Value);
             var employee = _Mapper.Map<CreateEmployeeDTO>(Employee);
 
             ViewData["Id"] = id.Value;
             return View(employee);
         }
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public Task<IActionResult> Edit(int? id)
         {
             return Details(id.Value);
         }
 
         [HttpPost]
-        public IActionResult Edit([FromRoute] int? id , CreateEmployeeDTO createEmployeeDTO)
+        public async Task<IActionResult> Edit([FromRoute] int? id , CreateEmployeeDTO createEmployeeDTO)
         {
             if (ModelState.IsValid)
             {
@@ -93,14 +93,14 @@ namespace ASP.NET.Assignment.PL.Controllers
                     createEmployeeDTO.ImageName = AttachmentsSettings.Upload(createEmployeeDTO.Image);
                 }
 
-                var Departments = _unitOfWork.DepartmentRepository.Value.GetAll();
+                var Departments = await _unitOfWork.DepartmentRepository.Value.GetAllAsync();
                 ViewData["Departments"] = Departments;
-                var oldemp = _unitOfWork.EmployeeRepositroy.Value.Get(id.Value);
+                var oldemp = await _unitOfWork.EmployeeRepositroy.Value.GetAsync(id.Value);
 
                 var employee = _Mapper.Map(createEmployeeDTO, oldemp);
 
-                _unitOfWork.EmployeeRepositroy.Value.Update(employee);
-                _unitOfWork.ApplyToDB();
+               await _unitOfWork.EmployeeRepositroy.Value.Update(employee);
+               await _unitOfWork.ApplyToDB();
             }
             return RedirectToAction(nameof(Index));
         }
@@ -111,11 +111,11 @@ namespace ASP.NET.Assignment.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int? id, string deleteOption)
+        public async Task<IActionResult> Delete(int? id, string deleteOption)
         {
 
 
-            var employee = _unitOfWork.EmployeeRepositroy.Value.Get(id.Value);
+            var employee = await _unitOfWork.EmployeeRepositroy.Value.GetAsync(id.Value);
 
 
             if (deleteOption == "1")
@@ -123,9 +123,9 @@ namespace ASP.NET.Assignment.PL.Controllers
                 if (employee.IsActive)
                 {
                     employee.IsActive = false;
-                    _unitOfWork.EmployeeRepositroy.Value.Update(employee);
+                    await _unitOfWork.EmployeeRepositroy.Value.Update(employee);
                     var count = _unitOfWork.ApplyToDB();
-                    if(count > 0) return RedirectToAction(nameof(Index));
+                    if(count.Result > 0) return RedirectToAction(nameof(Index));
                     {
                         ViewBag.ErrorMessage = "Something Wrong Happend";
                         return Delete(id);
@@ -141,9 +141,9 @@ namespace ASP.NET.Assignment.PL.Controllers
                 if (!employee.IsDeleted)
                 {
                     employee.IsDeleted = true;
-                    _unitOfWork.EmployeeRepositroy.Value.Update(employee);
+                    await _unitOfWork.EmployeeRepositroy.Value.Update(employee);
                     var count = _unitOfWork.ApplyToDB();
-                    if (count > 0) return RedirectToAction(nameof(Index));
+                    if (count.Result > 0) return RedirectToAction(nameof(Index));
                     {
                         ViewBag.ErrorMessage = "Something Wrong Happend";
                         return Delete(id);
