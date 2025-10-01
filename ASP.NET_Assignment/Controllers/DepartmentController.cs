@@ -22,9 +22,9 @@ namespace ASP.NET.Assignment.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var departments = _unitOfWork.DepartmentRepository.Value.GetAll();
+            var departments = await _unitOfWork.DepartmentRepository.Value.GetAllAsync();
             ////Dictionary: => Transfer Extra Information From Controller to view
             //// 1.ViewData
             //ViewData["Message"] = "Hello From ViewData";
@@ -38,14 +38,14 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(CreateDepartmentDto createDepartmentDto) {
+        public async Task<IActionResult> Create(CreateDepartmentDto createDepartmentDto) {
 
             if (ModelState.IsValid)
             {
                 var department = _mapper.Map<Department>(createDepartmentDto);
-                 _unitOfWork.DepartmentRepository.Value.Add(department);
+                await _unitOfWork.DepartmentRepository.Value.AddAsync(department);
                 var state = _unitOfWork.ApplyToDB();
-                if (state > 0)
+                if (state.Result > 0)
                 {
                     TempData["Message"] = $"{department.Name} Department is Successfully Created ";
                     return RedirectToAction(nameof(Index));
@@ -54,12 +54,12 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View(createDepartmentDto);
         }
 
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var department = _unitOfWork.DepartmentRepository.Value.Get(id.Value);
-            var empleoyees = _unitOfWork.EmployeeRepositroy.Value.GetAll();
+            var department = await _unitOfWork.DepartmentRepository.Value.GetAsync(id.Value);
+            var empleoyees = await _unitOfWork.EmployeeRepositroy.Value.GetAllAsync();
             ViewData["Employees"] = empleoyees;
             if (department is null) return NotFound(new {StatusCode = 404 , message = $"Dpeartment With Id {id} not found"});
 
@@ -70,14 +70,14 @@ namespace ASP.NET.Assignment.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public Task<IActionResult> Edit(int? id)
         {
             return Details(id.Value);
         }
             [HttpPost]
-        public IActionResult Edit([FromRoute]int? id , CreateDepartmentDto createDepartmentDto) {
+        public async Task<IActionResult> Edit([FromRoute]int? id , CreateDepartmentDto createDepartmentDto) {
             if (ModelState.IsValid) {
-                var olddept = _unitOfWork.DepartmentRepository.Value.Get(id.Value);
+                var olddept = await _unitOfWork.DepartmentRepository.Value.GetAsync(id.Value);
                 var department = _mapper.Map(createDepartmentDto, olddept);
                 _unitOfWork.DepartmentRepository.Value.Update(department);
                 var state = _unitOfWork.ApplyToDB();
@@ -89,11 +89,11 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Delete(int? id) {
-            var department = _unitOfWork.DepartmentRepository.Value.Get(id.Value);
+        public async Task<IActionResult> Delete(int? id) {
+            var department = await _unitOfWork.DepartmentRepository.Value.GetAsync(id.Value);
              _unitOfWork.DepartmentRepository.Value.Delete(department);
             var res = _unitOfWork.ApplyToDB();
-            if (res > 0)
+            if (res.Result > 0)
             {
                 return View("Models/DeletionSuccess");
             }
