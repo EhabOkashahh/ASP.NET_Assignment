@@ -91,7 +91,11 @@ namespace ASP.NET.Assignment.PL.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int? id) {
             var department = await _unitOfWork.DepartmentRepository.Value.GetAsync(id.Value);
-             _unitOfWork.DepartmentRepository.Value.Delete(department);
+            if(department is null)
+            {
+                return View("Models/DeletionUnSuccess");
+            }
+            _unitOfWork.DepartmentRepository.Value.Delete(department);
             var res = _unitOfWork.ApplyToDB();
             if (res.Result > 0)
             {
@@ -99,5 +103,5 @@ namespace ASP.NET.Assignment.PL.Controllers
             }
             return View("Models/DeletionUnSuccess");
         }
-    }
+    }  
 }

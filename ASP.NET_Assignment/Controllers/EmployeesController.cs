@@ -140,6 +140,7 @@ namespace ASP.NET.Assignment.PL.Controllers
             {
                 if (!employee.IsDeleted)
                 {
+                    employee.IsActive = false;
                     employee.IsDeleted = true;
                     await _unitOfWork.EmployeeRepositroy.Value.Update(employee);
                     var count = _unitOfWork.ApplyToDB();
