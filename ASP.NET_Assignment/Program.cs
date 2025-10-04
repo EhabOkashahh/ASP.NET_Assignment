@@ -3,6 +3,7 @@ using ASP.NET_Assignment.BLL.Interfaces;
 using ASP.NET_Assignment.BLL.Repositories;
 using ASP.NET_Assignment.DAL.Data.Contexts;
 using ASP.NET_Assignment.DAL.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET_Assignment
@@ -22,7 +23,11 @@ namespace ASP.NET_Assignment
             builder.Services.AddAutoMapper(M=>M.AddProfile(new EmployeeProfile()));
             builder.Services.AddAutoMapper(M => M.AddProfile(new DepartmentProfile()));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+            builder.Services.AddIdentity<AppUser , IdentityRole>().AddEntityFrameworkStores<AssignmentDbContext>();
+            builder.Services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = "/Account/SignIn";
+            });
             //builder.Services.AddScoped    => Create Object Life Time Per Request   then will be unreachable object
             //builder.Services.AddTransient => Create Object Life Time Per Operation   then will be unreachable object
             //builder.Services.AddSingleton => Create Object Life Time Per Applecation   then will be unreachable object
@@ -40,6 +45,9 @@ namespace ASP.NET_Assignment
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseRouting();
 

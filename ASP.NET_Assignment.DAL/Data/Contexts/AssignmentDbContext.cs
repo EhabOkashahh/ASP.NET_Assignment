@@ -1,5 +1,6 @@
 ﻿using ASP.NET_Assignment.DAL.Data.Configurations;
 using ASP.NET_Assignment.DAL.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ASP.NET_Assignment.DAL.Data.Contexts
 {
-    public class AssignmentDbContext : DbContext
+    public class AssignmentDbContext : IdentityDbContext<AppUser>
     {
         public AssignmentDbContext(DbContextOptions<AssignmentDbContext> dbContextOptions) : base(dbContextOptions)
         {
@@ -22,6 +23,8 @@ namespace ASP.NET_Assignment.DAL.Data.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            base.OnModelCreating(modelBuilder);
         }
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{

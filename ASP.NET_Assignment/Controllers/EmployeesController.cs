@@ -5,6 +5,7 @@ using ASP.NET_Assignment.BLL.Repositories;
 using ASP.NET_Assignment.DAL.Models;
 using AspNetCoreGeneratedDocument;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.CodeDom;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
+    [Authorize]
     public class EmployeesController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
