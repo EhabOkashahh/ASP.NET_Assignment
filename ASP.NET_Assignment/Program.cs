@@ -23,7 +23,7 @@ namespace ASP.NET_Assignment
             builder.Services.AddAutoMapper(M=>M.AddProfile(new EmployeeProfile()));
             builder.Services.AddAutoMapper(M => M.AddProfile(new DepartmentProfile()));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddIdentity<AppUser , IdentityRole>().AddEntityFrameworkStores<AssignmentDbContext>();
+            builder.Services.AddIdentity<AppUser , IdentityRole>().AddEntityFrameworkStores<AssignmentDbContext>().AddDefaultTokenProviders();
             builder.Services.ConfigureApplicationCookie(config =>
             {
                 config.LoginPath = "/Account/SignIn";
