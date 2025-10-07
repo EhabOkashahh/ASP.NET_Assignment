@@ -1,0 +1,27 @@
+﻿@model UserToReturnDto
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1 class="mb-5">Details Page</h1>
+<form>
+    <div class="mb-3">
+        <label asp-for="UserName" class="form-label"></label>
+        <input asp-for="UserName" class="form-control" readonly>
+    </div>
+    <div class="mb-3">
+        <label asp-for="FirstName" class="form-label"></label>
+        <input asp-for="FirstName" class="form-control" readonly>
+    </div>
+    <div class="mb-3">
+        <label asp-for="LastName" class="form-label">Create at</label>
+        <input asp-for="LastName" class="form-control" readonly>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Create at</label>
+        <input asp-for="Email" class="form-control" readonly>
+    </div>
+   
+    <a class="btn btn-warning mt-2" asp-route-id ="@ViewBag.Id" asp-action="Edit">Edit</a>
+    <a class="btn btn-light mt-2" asp-action="index" >Back To List</a>
+</form>

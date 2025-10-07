@@ -76,7 +76,7 @@ namespace ASP.NET.Assignment.PL.Controllers
         {
             return Details(id.Value);
         }
-            [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Edit([FromRoute]int? id , CreateDepartmentDto createDepartmentDto) {
             if (ModelState.IsValid) {
                 var olddept = await _unitOfWork.DepartmentRepository.Value.GetAsync(id.Value);

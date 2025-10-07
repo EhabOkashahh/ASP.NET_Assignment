@@ -1,0 +1,12 @@
+﻿
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h4>Are you sure you want to delete this record?</h4>
+<p>This record will permanently Deleted and you cannot rollback of this action</p>
+<form asp-action="Delete" method="post">
+<button asp-action="Delete" class="btn btn-danger">Confirm</button>
+
+<a asp-action="index" class="btn btn-light">Retreat</a>
+</form>

@@ -1,17 +1,17 @@
 ﻿@model UserToReturnDto
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Update";
 }
 
-<h1 class="mb-3">Edit</h1>
-<form asp-action="Edit">
+<h1>Update</h1>
+<form asp-action="Update">
     <partial name="PartialViews/_FormView">
 
     <button type="submit" class="btn btn-primary mt-2">Save Changes</button>
-    <a class ="btn btn-light mt-2" asp-action="Details" asp-route-id ="@ViewBag.ID" >Back To Details Page</a>
+    <a class ="btn btn-light mt-2" asp-action="Index">Back To List</a>
 </form>
 
-@section ValidationSection{
+@section ValidationSection {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
