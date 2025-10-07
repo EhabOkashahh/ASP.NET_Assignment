@@ -2,10 +2,12 @@
 using ASP.NET.Assignment.PL.Helpers;
 using ASP.NET_Assignment.Controllers;
 using ASP.NET_Assignment.DAL.Models;
+using ASP.NET_Assignment.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Newtonsoft.Json.Linq;
 using System.Data.Common;
 using System.Threading.Tasks;
 
@@ -118,24 +120,17 @@ namespace ASP.NET.Assignment.PL.Controllers
         {
 
             if (ModelState.IsValid) {
-                var res = await _userManager.FindByEmailAsync(model.Email);
-                if(res is null)
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if(user is null)
                 {
                     ModelState.AddModelError("", "Invalid Email!");
+                    return View(nameof(ForgetPassword),model);
                     
                 }
                 //Generate token
-                var token = await _userManager.GeneratePasswordResetTokenAsync(res);
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 //Generate URL
-                UrlActionContext context = new UrlActionContext()
-                {
-                    Protocol = "http",
-                    Action = "ResetPaswword",
-                    Controller = "Account",
-                    Values = new { email = model.Email, token },
-                    Host = Request.Scheme
-                };
-                var url = Url.Action(context);
+                var url = Url.Action("ResetPasword","Account", new { email = model.Email, token } , Request.Scheme);
 
 
                 var Email = new Email()
@@ -150,13 +145,36 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             }
             
-            return View(nameof(ForgetPassword));
+            return View(nameof(ForgetPassword),model);
         }
 
         #endregion
 
         #region Reset Password
-            
+        [HttpGet]
+        public IActionResult ResetPasword(string email , string token)
+        {
+            TempData["email"] = email; 
+            TempData["token"] = token;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPasword(ResetPaswordDto model)
+        {
+            if (ModelState.IsValid) {
+                var email = TempData["email"] as string;
+                var token = TempData["token"] as string;
+                if (email is null || token is null) return View("Error");
+                var user =await _userManager.FindByEmailAsync(email);
+
+                if(user is null) return View("Error");
+                var res = await _userManager.ResetPasswordAsync(user,token,model.Password);
+
+                if (!res.Succeeded) return View("Error");
+                return RedirectToAction(nameof(SignIn));
+            }
+            return View(model);
+        }
         #endregion
     }
 }
