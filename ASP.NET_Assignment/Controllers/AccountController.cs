@@ -95,7 +95,12 @@ namespace ASP.NET.Assignment.PL.Controllers
         #endregion
 
         #region SignOut
-
+        [HttpGet]
+        public async Task<IActionResult> SignOut()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(SignIn),"Account");
+        }
         #endregion
     }
 }
