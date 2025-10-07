@@ -1,9 +1,13 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
+using ASP.NET.Assignment.PL.Helpers;
 using ASP.NET_Assignment.Controllers;
 using ASP.NET_Assignment.DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
@@ -101,6 +105,58 @@ namespace ASP.NET.Assignment.PL.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction(nameof(SignIn),"Account");
         }
+        #endregion
+
+        #region Forget Password
+        [HttpGet]
+        public IActionResult ForgetPassword () {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendResetEmailURL (ForgetPasswordDto model) 
+        {
+
+            if (ModelState.IsValid) {
+                var res = await _userManager.FindByEmailAsync(model.Email);
+                if(res is null)
+                {
+                    ModelState.AddModelError("", "Invalid Email!");
+                    
+                }
+                //Generate token
+                var token = await _userManager.GeneratePasswordResetTokenAsync(res);
+                //Generate URL
+                UrlActionContext context = new UrlActionContext()
+                {
+                    Protocol = "http",
+                    Action = "ResetPaswword",
+                    Controller = "Account",
+                    Values = new { email = model.Email, token },
+                    Host = Request.Scheme
+                };
+                var url = Url.Action(context);
+
+
+                var Email = new Email()
+                {
+                    To = model.Email,
+                    subject = "Reset Password",
+                    Body = url
+                };
+                var flag = EmailSettings.SendEmail(Email);
+                if (!flag) ModelState.AddModelError("", "Something Wrong happened try again later");
+                else return View("CheckInbox");
+
+            }
+            
+            return View(nameof(ForgetPassword));
+        }
+
+        #endregion
+
+        #region Reset Password
+            
         #endregion
     }
 }
