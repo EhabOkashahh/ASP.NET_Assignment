@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Welcome To Dashboard</h1>
+<div class="cards mt-5">
+    <a asp-action="index" asp-controller="User" class="btn btn-success text-white mb-3" style="width: 18rem; display:flex; justify-content:center; align-items:center">
+        <div class="fw-bolder" style="font-size: 2rem;">Users</div>
+    </a>
+    <a asp-action="index" asp-controller="Role" class="btn btn-success text-white mb-3" style="width: 18rem; display:flex; justify-content:center; align-items:center">
+        <div class="fw-bolder" style="font-size: 2rem;">Roles</div>
+    </a>
+</div>

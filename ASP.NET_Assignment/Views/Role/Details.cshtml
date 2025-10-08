@@ -1,0 +1,19 @@
+﻿@model RoleToReturnDto
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1 class="mb-5">Details Page</h1>
+<form>
+    <div class="mb-3">
+        <label asp-for="Id" class="form-label"></label>
+        <input asp-for="Id" class="form-control" readonly>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" readonly>
+    </div>
+
+    <a class="btn btn-warning mt-2" asp-route-id ="@ViewBag.Id" asp-action="Edit">Edit</a>
+    <a class="btn btn-light mt-2" asp-action="index" >Back To List</a>
+</form>
