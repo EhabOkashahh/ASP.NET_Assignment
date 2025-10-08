@@ -10,7 +10,7 @@ namespace ASP.NET.Assignment.PL.DTOs
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public IEnumerable<UserRolesDto>? Roles { get; set; } = new List<UserRolesDto>();
+        public IEnumerable<string>? Roles { get; set; } = new List<string>();
 
     }
 }

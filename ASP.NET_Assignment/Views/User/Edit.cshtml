@@ -6,7 +6,11 @@
 <h1 class="mb-3">Edit</h1>
 <form asp-action="Edit">
     <partial name="PartialViews/_FormView">
-
+        <div>
+            <a asp-action="AddOrRemoveRole" asp-route-userId="@Model.Id" class="btn btn-warning btn-sm">
+                Manage Roles
+            </a>
+        </div>
     <button type="submit" class="btn btn-primary mt-2">Save Changes</button>
     <a class ="btn btn-light mt-2" asp-action="Details" asp-route-id ="@ViewBag.ID" >Back To Details Page</a>
 </form>
