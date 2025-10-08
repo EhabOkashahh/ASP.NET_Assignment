@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Data.Common;
 
 namespace ASP.NET.Assignment.PL.DTOs
 {
@@ -9,7 +10,7 @@ namespace ASP.NET.Assignment.PL.DTOs
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public IEnumerable<string>? Roles { get; set; }
+        public IEnumerable<UserRolesDto>? Roles { get; set; } = new List<UserRolesDto>();
 
     }
 }

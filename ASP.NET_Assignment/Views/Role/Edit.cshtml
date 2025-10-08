@@ -6,7 +6,7 @@
 <h1 class="mb-3">Edit</h1>
 <form asp-action="Edit">
     <partial name="PartialViews/_FormView">
-
+        <div><a asp-action="" class="btn btn-secondary">Add Or Remove Role</a></div>
     <button type="submit" class="btn btn-primary mt-2">Save Changes</button>
     <a class ="btn btn-light mt-2" asp-action="Index">Back To List</a>
 </form>
@@ -14,4 +14,4 @@
 @section ValidationSection{
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-}
+}  

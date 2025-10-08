@@ -112,8 +112,13 @@ namespace ASP.NET.Assignment.PL.Controllers
             var currentUserId = _userManager.GetUserId(User);
             if (currentUserId == userToDelete.Id) {
 
-                await _signInManager.SignOutAsync();
-                return RedirectToAction(nameof(SignIn),"Account");
+                var deletedRes = await _userManager.DeleteAsync(userToDelete);
+                if (deletedRes.Succeeded) { 
+                    await _signInManager.SignOutAsync();
+                    return RedirectToAction(nameof(SignIn),"Account");
+                }
+                return View("Models/DeletionUnSuccess");
+
             }
             var res = await _userManager.DeleteAsync(userToDelete);
 
