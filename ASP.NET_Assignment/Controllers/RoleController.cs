@@ -1,4 +1,5 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class RoleController : Controller
     {
         public RoleManager<IdentityRole> _roleManager { get; }

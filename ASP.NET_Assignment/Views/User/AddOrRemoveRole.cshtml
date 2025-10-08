@@ -1,0 +1,34 @@
+﻿@model EditUserRolesViewModel
+@{
+    ViewData["Title"] = "AddOrRemoveRole";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Manage Roles for </h3>
+
+<form asp-action="AddOrRemoveRole">
+    <input type="hidden" asp-for="UserId" />
+    <table class="table">   
+        <thead>
+            <tr>
+                <th>Role</th>
+                <th>Assigned</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Roles.Count; i++)
+            {
+                <tr>
+                    <td>@Model.Roles[i].RoleName</td>
+                    <td>
+                        <input asp-for="Roles[i].IsSelected" type="checkbox" />
+                        <input type="hidden" asp-for="Roles[i].RoleId" />
+                        <input type="hidden" asp-for="Roles[i].RoleName" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

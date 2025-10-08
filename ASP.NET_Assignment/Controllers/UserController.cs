@@ -1,6 +1,7 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
 using ASP.NET_Assignment.DAL.Models;
 using AspNetCoreGeneratedDocument;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Model;
@@ -9,48 +10,73 @@ using NuGet.Versioning;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class UserController : Controller
     {
         public UserManager<AppUser> _userManager { get; }
         public SignInManager<AppUser> _signInManager { get; }
+        public RoleManager<IdentityRole> _roleManager { get; }
 
-        public UserController(UserManager<AppUser> userManager , SignInManager<AppUser> signInManager)
+        public UserController(UserManager<AppUser> userManager , SignInManager<AppUser> signInManager , RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
 
-        public async Task<IActionResult> Index(string? SearchText)
+        public async Task<IActionResult> Index(string? searchText)
         {
-            IEnumerable<UserToReturnDto> users;
-            if (String.IsNullOrEmpty(SearchText))
-            {
-                 users = _userManager.Users.Select(U => new UserToReturnDto()
-                {
-                    Id = U.Id,
-                    UserName = U.UserName,
-                    FirstName = U.FirstName,
-                    LastName = U.LastName,
-                    Email = U.Email,
-                    Roles = _userManager.GetRolesAsync(U).Result
-                });
-            }
+            #region Code
+            //var usersQuery = _userManager.Users.AsQueryable();
 
-            else
-            {
-                users = _userManager.Users.Select(U => new UserToReturnDto()
+            //if (!string.IsNullOrEmpty(searchText))
+            //{
+            //    usersQuery = usersQuery.Where(u => u.UserName.ToLower().Contains(searchText.ToLower()));
+            //}
+
+            //var usersList = usersQuery.ToList();
+            //var users = new List<UserToReturnDto>();
+
+            //foreach (var user in usersList)
+            //{
+            //    var roles = await _userManager.GetRolesAsync(user);
+            //    users.Add(new UserToReturnDto
+            //    {
+            //        Id = user.Id,
+            //        UserName = user.UserName,
+            //        FirstName = user.FirstName,
+            //        LastName = user.LastName,
+            //        Email = user.Email,
+            //        Roles = roles 
+            //    });
+            //}
+
+            //ViewBag.LoggedInUser = _userManager.GetUserId(User);
+            //return View(users); 
+            #endregion
+
+            var users = _userManager.Users.AsQueryable();
+            if (!String.IsNullOrEmpty(searchText)) users = users.Where(U => U.UserName.ToLower().Contains(searchText.ToLower()));
+
+                var usersToReturn = new List<UserToReturnDto>();
+                foreach (var user in users)
                 {
-                    Id = U.Id,
-                    UserName = U.UserName,
-                    FirstName = U.FirstName,
-                    LastName = U.LastName,
-                    Roles = _userManager.GetRolesAsync(U).Result
-                }).Where(U=> U.UserName.ToLower().Contains(SearchText.ToLower()));
-            }
+                    var Roles = await _userManager.GetRolesAsync(user);
+                    usersToReturn.Add(new UserToReturnDto()
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Email = user.Email,
+                        Roles = Roles
+                    });
+                }
             ViewBag.LoggedInUser = _userManager.GetUserId(User);
-            return View(users);
+            return View(usersToReturn);
         }
+
 
         public async Task<IActionResult> Details(string? id)
         {
@@ -78,6 +104,7 @@ namespace ASP.NET.Assignment.PL.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([FromRoute] string? id, UserToReturnDto model)
         {
+            ViewBag.id = id;
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByIdAsync(id);
@@ -129,5 +156,68 @@ namespace ASP.NET.Assignment.PL.Controllers
             }
             return View("Models/DeletionUnSuccess");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> AddOrRemoveRole(string? userId)
+        {
+            #region code
+            //var user = await _userManager.FindByIdAsync(userId);
+            //if (user == null)
+            //    return NotFound();
+
+            //var userRoles = await _userManager.GetRolesAsync(user);
+            //var allRoles = _roleManager.Roles.ToList();
+
+            //var model = new EditUserRolesViewModel
+            //{
+            //    UserId = user.Id,
+            //    UserName = user.UserName,
+            //    Email = user.Email,
+            //    Roles = allRoles.Select(role => new UserRolesDto
+            //    {
+            //        RoleId = role.Id,
+            //        RoleName = role.Name,
+            //        IsSelected = userRoles.Contains(role.Name)
+            //    }).ToList()
+            //};
+            //return View(model); 
+            #endregion
+            var user = await _userManager.FindByIdAsync(userId);
+            if(user is null) return View("Error");
+
+            var userRoles =await _userManager.GetRolesAsync(user);
+            var AllRoles =await _roleManager.Roles.ToListAsync();
+
+            var model = new EditUserRolesViewModel()
+            {
+                UserId = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Roles = AllRoles.Select(R => new UserRolesDto()
+                {
+                    RoleId = R.Id,
+                    RoleName = R.Name,
+                    IsSelected = userRoles.Contains(R.Name)
+                }).ToList()
+            };
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddOrRemoveRole(EditUserRolesViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user is null) return View("Error");
+
+            var CurrentRoles = await _userManager.GetRolesAsync(user);
+            var SelectedRoles = model.Roles.Where(R => R.IsSelected).Select(R => R.RoleName);
+
+            await _userManager.AddToRolesAsync(user, SelectedRoles.Except(CurrentRoles));
+
+            await _userManager.RemoveFromRolesAsync(user, CurrentRoles.Except(SelectedRoles));
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
+    
