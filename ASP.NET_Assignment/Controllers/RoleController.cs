@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
-    [Authorize(Roles = "admin")]
     public class RoleController : Controller
     {
-        public RoleManager<IdentityRole> _roleManager { get; }
+        public RoleManager<AppRole> _roleManager { get; }
         public UserManager<AppUser> _userManager { get; }
 
-        public RoleController(RoleManager<IdentityRole> roleManager , UserManager<AppUser> userManager)
+        public RoleController(RoleManager<AppRole> roleManager , UserManager<AppUser> userManager)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -28,6 +27,7 @@ namespace ASP.NET.Assignment.PL.Controllers
                 {
                     Id = R.Id,
                     Name = R.Name,
+                    Level = R.Level,
                 });
                 return View(Roles);
             }
@@ -36,6 +36,7 @@ namespace ASP.NET.Assignment.PL.Controllers
             {
                 Id = R.Id,
                 Name = R.Name,
+                Level = R.Level
             }).Where(R => R.Name.ToLower().Contains(searchText.ToLower()));
 
             return View(FilteredRoles);
@@ -52,9 +53,10 @@ namespace ASP.NET.Assignment.PL.Controllers
             var modelname = await _roleManager.FindByNameAsync(model.Name);
             if(modelname is null)
             {
-                IdentityRole role = new()
+                AppRole role = new AppRole()
                 {
                     Name = model.Name,
+                    Level = model.Level
                 };
                 var res = await _roleManager.CreateAsync(role);
                 if (res.Succeeded) return RedirectToAction("Index");
@@ -73,7 +75,8 @@ namespace ASP.NET.Assignment.PL.Controllers
             RoleToReturnDto model = new()
             {
                 Id = role.Id,
-                Name = role.Name
+                Name = role.Name,
+                Level= role.Level
             };
 
             // Get all users to display
@@ -106,11 +109,11 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             if (role is null) return View("Error");
 
-            var rolename = await _roleManager.FindByNameAsync(model.Name);
-            if(rolename is null)
+            if(model.Name is not null)
             {
                 role.Id = model.Id;
                 role.Name = model.Name;
+                role.Level = model.Level;
 
                 var res = await _roleManager.UpdateAsync(role);
                 if (res.Succeeded) return RedirectToAction(nameof(Index));

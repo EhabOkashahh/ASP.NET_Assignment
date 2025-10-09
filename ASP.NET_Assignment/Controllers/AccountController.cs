@@ -52,6 +52,7 @@ namespace ASP.NET.Assignment.PL.Controllers
                             IsAgree = model.IsAgree,
                         };
                         var result = await _userManager.CreateAsync(user, model.Password);
+                        await _userManager.AddToRoleAsync(user  , "Member");
                         if (result.Succeeded) return RedirectToAction(nameof(SignIn));
                         foreach (var err in result.Errors)
                         {

@@ -23,6 +23,7 @@
             <tr>
                 <th>Id</th>
                 <th>Name</th>
+                <th>Level</th>
                 <th>Details</th>
                 <th>Update</th>
                 <th>Delete</th>
@@ -35,6 +36,7 @@
                 <tr>
                     <td>@item.Id</td>
                     <td>@item.Name</td>
+                    <td>@item.Level</td>
                     <partial name="_ButtonPartialViews" model="@item.Id" />
                 </tr>
             }

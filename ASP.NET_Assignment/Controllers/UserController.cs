@@ -1,4 +1,5 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
+using ASP.NET.Assignment.PL.Helpers;
 using ASP.NET_Assignment.DAL.Models;
 using AspNetCoreGeneratedDocument;
 using Microsoft.AspNetCore.Authorization;
@@ -10,52 +11,25 @@ using NuGet.Versioning;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
-    //[Authorize(Roles = "admin")]
     public class UserController : Controller
     {
         public UserManager<AppUser> _userManager { get; }
         public SignInManager<AppUser> _signInManager { get; }
-        public RoleManager<IdentityRole> _roleManager { get; }
+        public RoleManager<AppRole> _roleManager { get; }
+        public RoleService _roleService { get; }
 
-        public UserController(UserManager<AppUser> userManager , SignInManager<AppUser> signInManager , RoleManager<IdentityRole> roleManager)
+        public UserController(UserManager<AppUser> userManager , SignInManager<AppUser> signInManager , RoleManager<AppRole> roleManager,RoleService roleService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _roleService = roleService;
         }
 
 
         public async Task<IActionResult> Index(string? searchText)
         {
-            #region Code
-            //var usersQuery = _userManager.Users.AsQueryable();
-
-            //if (!string.IsNullOrEmpty(searchText))
-            //{
-            //    usersQuery = usersQuery.Where(u => u.UserName.ToLower().Contains(searchText.ToLower()));
-            //}
-
-            //var usersList = usersQuery.ToList();
-            //var users = new List<UserToReturnDto>();
-
-            //foreach (var user in usersList)
-            //{
-            //    var roles = await _userManager.GetRolesAsync(user);
-            //    users.Add(new UserToReturnDto
-            //    {
-            //        Id = user.Id,
-            //        UserName = user.UserName,
-            //        FirstName = user.FirstName,
-            //        LastName = user.LastName,
-            //        Email = user.Email,
-            //        Roles = roles 
-            //    });
-            //}
-
-            //ViewBag.LoggedInUser = _userManager.GetUserId(User);
-            //return View(users); 
-            #endregion
-
+            
             var users = _userManager.Users.AsQueryable();
             if (!String.IsNullOrEmpty(searchText)) users = users.Where(U => U.UserName.ToLower().Contains(searchText.ToLower()));
 
@@ -84,6 +58,15 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             var user = _userManager.FindByIdAsync(id).Result;
             if(user is null) return BadRequest("User not Found!");
+            var currentUseriD = _userManager.GetUserId(User);
+            if (currentUseriD is null) return View("Error");
+
+            var currentUser = await _userManager.FindByIdAsync(currentUseriD);
+            if (currentUser is null) return View("Error");
+
+            var CanEdit = await _roleService.CanEditUserAsync(currentUser, user);
+            TempData["CanEdit"] = CanEdit;
+
             var dto = new UserToReturnDto()
             {
                 Id = user.Id,
@@ -160,33 +143,15 @@ namespace ASP.NET.Assignment.PL.Controllers
         [HttpGet]
         public async Task<IActionResult> AddOrRemoveRole(string? userId)
         {
-            #region code
-            //var user = await _userManager.FindByIdAsync(userId);
-            //if (user == null)
-            //    return NotFound();
-
-            //var userRoles = await _userManager.GetRolesAsync(user);
-            //var allRoles = _roleManager.Roles.ToList();
-
-            //var model = new EditUserRolesViewModel
-            //{
-            //    UserId = user.Id,
-            //    UserName = user.UserName,
-            //    Email = user.Email,
-            //    Roles = allRoles.Select(role => new UserRolesDto
-            //    {
-            //        RoleId = role.Id,
-            //        RoleName = role.Name,
-            //        IsSelected = userRoles.Contains(role.Name)
-            //    }).ToList()
-            //};
-            //return View(model); 
-            #endregion
             var user = await _userManager.FindByIdAsync(userId);
             if(user is null) return View("Error");
 
             var userRoles =await _userManager.GetRolesAsync(user);
             var AllRoles =await _roleManager.Roles.ToListAsync();
+            var CurrentUser = await _userManager.GetUserAsync(User);
+            var CurrentUserRole = await _userManager.GetRolesAsync(CurrentUser);
+
+            ViewBag.CurrentUserRole = AllRoles.Where(R => CurrentUserRole.Contains(R.Name)).Select(R=>R.Level).Max();
 
             var model = new EditUserRolesViewModel()
             {
@@ -197,8 +162,10 @@ namespace ASP.NET.Assignment.PL.Controllers
                 {
                     RoleId = R.Id,
                     RoleName = R.Name,
+                    Level = R.Level,
                     IsSelected = userRoles.Contains(R.Name)
                 }).ToList()
+                
             };
 
             return View(model);

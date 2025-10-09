@@ -4,6 +4,7 @@
     {
         public string RoleId { get; set; }
         public string RoleName { get; set; }
+        public int Level { get; set; }
         public bool IsSelected { get; set; }
     }
 }

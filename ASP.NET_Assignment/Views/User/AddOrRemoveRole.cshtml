@@ -18,14 +18,17 @@
         <tbody>
             @for (int i = 0; i < Model.Roles.Count; i++)
             {
-                <tr>
-                    <td>@Model.Roles[i].RoleName</td>
-                    <td>
-                        <input asp-for="Roles[i].IsSelected" type="checkbox" />
-                        <input type="hidden" asp-for="Roles[i].RoleId" />
-                        <input type="hidden" asp-for="Roles[i].RoleName" />
-                    </td>
-                </tr>
+                <input type="hidden" asp-for="Roles[i].RoleId" />
+                <input type="hidden" asp-for="Roles[i].RoleName" />
+                if (Model.Roles[i].Level < ViewBag.CurrentUserRole)
+                {
+                    <tr>
+                        <td>@Model.Roles[i].RoleName</td>
+                        <td>
+                            <input asp-for="Roles[i].IsSelected" type="checkbox" />
+                        </td>
+                    </tr>
+                }
             }
         </tbody>
     </table>

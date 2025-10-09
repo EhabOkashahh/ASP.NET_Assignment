@@ -4,6 +4,11 @@
     <input asp-for="Name" class="form-control">
     <span asp-validation-for="Name" class="text-danger"></span>
 </div>
+<div class="mb-3">
+    <label asp-for="Level" class="form-label"></label>
+    <input type="number" value="1" min="1" max="100" asp-for="Level" class="form-control">
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
 
 @section ValidationSection {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>

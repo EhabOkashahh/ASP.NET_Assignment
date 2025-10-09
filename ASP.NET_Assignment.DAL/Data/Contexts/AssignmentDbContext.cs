@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ASP.NET_Assignment.DAL.Data.Contexts
 {
-    public class AssignmentDbContext : IdentityDbContext<AppUser>
+    public class AssignmentDbContext : IdentityDbContext<AppUser,AppRole,string>
     {
         public AssignmentDbContext(DbContextOptions<AssignmentDbContext> dbContextOptions) : base(dbContextOptions)
         {

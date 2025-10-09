@@ -14,6 +14,10 @@
         <label asp-for="Name" class="form-label"></label>
         <input asp-for="Name" class="form-control" readonly>
     </div>
+    <div class="mb-3">
+        <label asp-for="Level" class="form-label"></label>
+        <input asp-for="Level" class="form-control" readonly>
+    </div>
 
     <label class="fw-bolder form-label">Users in Role</label>
     @if (users.Count() > 0)

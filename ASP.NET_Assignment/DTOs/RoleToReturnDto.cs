@@ -4,6 +4,7 @@
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public int Level { get; set; }
         public IEnumerable<UserRolesDto> UserRoles { get; set; } = new List<UserRolesDto>();
         public RoleToReturnDto()
         {
