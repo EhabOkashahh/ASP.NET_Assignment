@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
-    [Authorize(Roles = "admin")]
+    //[Authorize(Roles = "admin")]
     public class RoleController : Controller
     {
         public RoleManager<IdentityRole> _roleManager { get; }

@@ -10,7 +10,7 @@ using NuGet.Versioning;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
-    [Authorize(Roles = "admin")]
+    //[Authorize(Roles = "admin")]
     public class UserController : Controller
     {
         public UserManager<AppUser> _userManager { get; }

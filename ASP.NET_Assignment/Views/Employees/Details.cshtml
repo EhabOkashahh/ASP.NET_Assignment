@@ -4,8 +4,46 @@
     var departments = new SelectList(ViewData["Departments"] as IEnumerable<Department>, "Id", "Name");
 }
 
+<style>
+    .disabled-link {
+        pointer-events: none; 
+        color: gray;
+        text-decoration: none;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .ImagePreview{
+        /* width: 500px;
+        height: 500px; */
+    }
+</style>
+
+
 
 <h1>Details Page</h1>
+
+<center>
+    <div class="ImagePreview">
+        <h4>Employee Image</h4>
+        <img class="mb-3" style="border-radius:50%; width: 400px; height: 400px;" src="~/Files/Images/@Model.ImageName" />
+        @if (Model.ImageName != "DefaultPFP.png")
+        {
+            <div>
+                <a class="btn btn-warning" asp-action="Edit">Add Image</a>
+                <a class="btn btn-danger" asp-action="DeleteImage" asp-route-id="@ViewData["Id"]">Delete Image</a>
+            </div>
+        }
+        else
+        {
+            <div>
+                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@ViewData["Id"]">Add Image</a>
+                <a class="disabled-link btn btn-danger">Delete Image</a>
+            </div>
+        }
+    </div>
+</center>
+
     <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
         <input asp-for="Name" class="form-control" placeholder="Enter Name" readonly>
