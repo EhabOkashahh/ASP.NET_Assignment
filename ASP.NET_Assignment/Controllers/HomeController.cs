@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using ASP.NET_Assignment.DAL.Models;
 using ASP.NET_Assignment.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASP.NET_Assignment.Controllers
@@ -10,13 +12,19 @@ namespace ASP.NET_Assignment.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public UserManager<AppUser> _userManager { get; }
+        public RoleManager<AppRole> _roleManager { get; }
+
+        public HomeController(ILogger<HomeController> logger , UserManager<AppUser> userManager , RoleManager<AppRole> roleManager)
         {
             _logger = logger;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public IActionResult Index()
         {
+
             return View();
         }
 
