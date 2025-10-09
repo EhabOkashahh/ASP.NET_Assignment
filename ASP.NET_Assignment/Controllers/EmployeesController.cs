@@ -19,7 +19,7 @@ namespace ASP.NET.Assignment.PL.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _Mapper;
 
-        public EmployeesController(IUnitOfWork unitOfWork,IMapper mapper)
+        public EmployeesController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _Mapper = mapper;
@@ -48,13 +48,13 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             if (ModelState.IsValid)
             {
-             
-                if(createEmployeeDTO.Image is not null)
+
+                if (createEmployeeDTO.Image is not null)
                 {
                     createEmployeeDTO.ImageName = AttachmentsSettings.Upload(createEmployeeDTO.Image);
                 }
-                 var employee = _Mapper.Map<Employee>(createEmployeeDTO);
-                 await _unitOfWork.EmployeeRepositroy.Value.AddAsync(employee);
+                var employee = _Mapper.Map<Employee>(createEmployeeDTO);
+                await _unitOfWork.EmployeeRepositroy.Value.AddAsync(employee);
                 var count = _unitOfWork.ApplyToDB();
                 if (count.Result > 0)
                 {
@@ -81,15 +81,15 @@ namespace ASP.NET.Assignment.PL.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromRoute] int? id , CreateEmployeeDTO createEmployeeDTO)
+        public async Task<IActionResult> Edit([FromRoute] int? id, CreateEmployeeDTO createEmployeeDTO)
         {
             if (ModelState.IsValid)
             {
-                if(createEmployeeDTO.ImageName is not null)
+                if (createEmployeeDTO.ImageName is not null)
                 {
                     AttachmentsSettings.Delete(createEmployeeDTO.ImageName);
                 }
-                if(createEmployeeDTO.Image is not null)
+                if (createEmployeeDTO.Image is not null)
                 {
 
                     createEmployeeDTO.ImageName = AttachmentsSettings.Upload(createEmployeeDTO.Image);
@@ -101,8 +101,8 @@ namespace ASP.NET.Assignment.PL.Controllers
 
                 var employee = _Mapper.Map(createEmployeeDTO, oldemp);
 
-               await _unitOfWork.EmployeeRepositroy.Value.Update(employee);
-               await _unitOfWork.ApplyToDB();
+                await _unitOfWork.EmployeeRepositroy.Value.Update(employee);
+                await _unitOfWork.ApplyToDB();
             }
             return RedirectToAction(nameof(Index));
         }
@@ -127,7 +127,7 @@ namespace ASP.NET.Assignment.PL.Controllers
                     employee.IsActive = false;
                     await _unitOfWork.EmployeeRepositroy.Value.Update(employee);
                     var count = _unitOfWork.ApplyToDB();
-                    if(count.Result > 0) return RedirectToAction(nameof(Index));
+                    if (count.Result > 0) return RedirectToAction(nameof(Index));
                     {
                         ViewBag.ErrorMessage = "Something Wrong Happend";
                         return Delete(id);
@@ -162,5 +162,24 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View("Delete");
         }
 
-    }
+        public IActionResult DeleteImage([FromRoute] int? id)
+        {
+            ViewBag.id = id;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteImage([FromRoute] int? id, string? imageName)
+        {
+            var employee = await _unitOfWork.EmployeeRepositroy.Value.GetAsync(id.Value);
+            if (employee is null) return View("Error");
+            if (employee.ImageName is null) return View("Error");
+            AttachmentsSettings.Delete(employee.ImageName);
+            employee.ImageName = "DefaultPFP.png";
+            await _unitOfWork.EmployeeRepositroy.Value.Update(employee);
+            await _unitOfWork.ApplyToDB();
+            return RedirectToAction(nameof(Index));
+        }
+
+    }  
 }

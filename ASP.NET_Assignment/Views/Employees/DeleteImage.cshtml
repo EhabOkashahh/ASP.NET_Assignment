@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewData["Title"] = "DeleteImage";
+}
+
+<h1>Delete Image</h1>
+<h4>Are you sure you want to delete this Image?</h4>
+<form asp-action="Delete" method="post">
+    <button asp-action="DeleteImage" class="btn btn-danger" asp-route-id="@ViewBag.id">Confirm</button>
+
+    <a asp-action="index" class="btn btn-light">Retreat</a>
+</form>
+
