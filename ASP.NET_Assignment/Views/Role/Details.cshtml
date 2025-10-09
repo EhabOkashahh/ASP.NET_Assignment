@@ -1,6 +1,7 @@
 ﻿@model RoleToReturnDto
 @{
     ViewData["Title"] = "Details";
+    var users = ViewBag.Users as IEnumerable<UserToReturnDto>;
 }
 
 <h1 class="mb-5">Details Page</h1>
@@ -14,6 +15,42 @@
         <input asp-for="Name" class="form-control" readonly>
     </div>
 
+    <label class="fw-bolder form-label">Users in Role</label>
+    @if (users.Count() > 0)
+    {
+        <table id="table" class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>userame</th>
+                    <th>FirstName</th>
+                    <th>LastName</th>
+                    <th>Email</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+            <tbody id="table-body">
+                @foreach(var user in users)
+                {
+                    <tr>
+                        <td>@user.Id</td>
+                        <td>@user.UserName</td>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Email</td>
+                        <td><a class="btn btn-warning" asp-action="AddOrRemoveRole" asp-controller="User" asp-route-userId="@user.Id">Manage Roles</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h4>There are no Users Assigned to this Role</h4>
+        </div>
+    }
     <a class="btn btn-warning mt-2" asp-route-id ="@ViewBag.Id" asp-action="Edit">Edit</a>
     <a class="btn btn-light mt-2" asp-action="index" >Back To List</a>
 </form>

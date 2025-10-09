@@ -1,4 +1,5 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
+using ASP.NET_Assignment.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,13 +8,16 @@ using System.Threading.Tasks;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")]
     public class RoleController : Controller
     {
         public RoleManager<IdentityRole> _roleManager { get; }
-        public RoleController(RoleManager<IdentityRole> roleManager)
+        public UserManager<AppUser> _userManager { get; }
+
+        public RoleController(RoleManager<IdentityRole> roleManager , UserManager<AppUser> userManager)
         {
             _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index(string? searchText)
@@ -71,6 +75,20 @@ namespace ASP.NET.Assignment.PL.Controllers
                 Id = role.Id,
                 Name = role.Name
             };
+
+            // Get all users to display
+            var Users = await _userManager.GetUsersInRoleAsync(role.Name);
+
+            
+            ViewBag.Users = Users.Select(U=> new UserToReturnDto()
+            {
+                Id= U.Id,
+                UserName = U.UserName,
+                FirstName = U.FirstName,
+                LastName = U.LastName,
+                Email = U.Email
+            });
+
             ViewBag.Id = model.Id;
             return View(model);
         }
