@@ -1,13 +1,16 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
+using ASP.NET.Assignment.PL.Helpers;
 using ASP.NET_Assignment.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
+    [RequiredRoleLevel(4)]
     public class RoleController : Controller
     {
         public RoleManager<AppRole> _roleManager { get; }
