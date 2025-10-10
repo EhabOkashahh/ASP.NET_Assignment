@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using NuGet.Versioning;
 
 namespace ASP.NET.Assignment.PL.Controllers
@@ -120,22 +121,36 @@ namespace ASP.NET.Assignment.PL.Controllers
                 return View("Models/DeletionUnSuccess");
             }
             var currentUserId = _userManager.GetUserId(User);
-            if (currentUserId == userToDelete.Id) {
+            var currentUser = await _userManager.FindByIdAsync(currentUserId);
+            if (currentUser is null) return View("Error");
 
-                var deletedRes = await _userManager.DeleteAsync(userToDelete);
-                if (deletedRes.Succeeded) { 
-                    await _signInManager.SignOutAsync();
-                    return RedirectToAction(nameof(SignIn),"Account");
-                }
-                return View("Models/DeletionUnSuccess");
+            var currentUserRoles =await _userManager.GetRolesAsync(currentUser);
+            var currentUserMaxRole =await _roleService.GetHighetRoleLevelAsync(currentUserRoles);
 
-            }
-            var res = await _userManager.DeleteAsync(userToDelete);
+            var userToDeleteRoles = await _userManager.GetRolesAsync(userToDelete);
+            var userToDeleteMaxRoles = await _roleService.GetHighetRoleLevelAsync(userToDeleteRoles);
 
-
-            if (res.Succeeded)
+            if(currentUserMaxRole > userToDeleteMaxRoles)
             {
-                return View("Models/DeletionSuccess");
+                if (currentUserId == userToDelete.Id)
+                {
+
+                    var deletedRes = await _userManager.DeleteAsync(userToDelete);
+                    if (deletedRes.Succeeded)
+                    {
+                        await _signInManager.SignOutAsync();
+                        return RedirectToAction(nameof(SignIn), "Account");
+                    }
+                    return View("Models/DeletionUnSuccess");
+
+                }
+                var res = await _userManager.DeleteAsync(userToDelete);
+
+
+                if (res.Succeeded)
+                {
+                    return View("Models/DeletionSuccess");
+                }
             }
             return View("Models/DeletionUnSuccess");
         }

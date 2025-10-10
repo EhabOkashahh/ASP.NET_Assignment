@@ -29,7 +29,7 @@ namespace ASP.NET.Assignment.PL.Helpers
             return currentLevel > targetLevel;
         }
 
-        private async Task<int> GetHighetRoleLevelAsync(IEnumerable<string> RoleNames)
+        public async Task<int> GetHighetRoleLevelAsync(IEnumerable<string> RoleNames)
         {
             var rolesLevel = _roleManager.Roles.Where(R=> RoleNames.Contains(R.Name)).Select(R => R.Level);
 
