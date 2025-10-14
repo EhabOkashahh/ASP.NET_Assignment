@@ -11,6 +11,7 @@ namespace ASP.NET_Assignment.DAL.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string? ImageName{ get; set; }
         public bool IsAgree { get; set; }
 
     }

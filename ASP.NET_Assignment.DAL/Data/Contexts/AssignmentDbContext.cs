@@ -20,6 +20,10 @@ namespace ASP.NET_Assignment.DAL.Data.Contexts
         public DbSet<Department> Departments { get; set; }
         public DbSet<Employee> Employees{ get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

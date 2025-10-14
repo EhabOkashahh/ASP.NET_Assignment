@@ -29,6 +29,8 @@ namespace ASP.NET_Assignment.Controllers
 
         public async Task<IActionResult> Index()
         {
+
+
             return View();
         }
 

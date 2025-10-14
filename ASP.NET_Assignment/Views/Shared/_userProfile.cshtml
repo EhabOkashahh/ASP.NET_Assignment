@@ -1,0 +1,13 @@
+﻿@inject UserManager<AppUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
+
+@if (user != null)
+{
+    <div class="profile" style="display:flex; flex-direction:column; margin-right:15px; margin-top:5px; justify-content:center; align-items:center;">
+        <a asp-action="Profile" asp-controller="User" asp-route-Id="@user.Id"> <img width="35" height="35" style="border-radius:50%;" src="~/Files/Images/@user.ImageName" alt="Profile" /></a>
+        <span>@user.UserName</span>
+    </div>
+}
