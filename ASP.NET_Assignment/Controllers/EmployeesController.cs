@@ -53,7 +53,9 @@ namespace ASP.NET.Assignment.PL.Controllers
                 {
                     createEmployeeDTO.ImageName = AttachmentsSettings.Upload(createEmployeeDTO.Image);
                 }
-                var employee = _Mapper.Map<Employee>(createEmployeeDTO);
+                else if(createEmployeeDTO.Image is null) createEmployeeDTO.ImageName = "DefaultPFP.png";
+
+                    var employee = _Mapper.Map<Employee>(createEmployeeDTO);
                 await _unitOfWork.EmployeeRepositroy.Value.AddAsync(employee);
                 var count = _unitOfWork.ApplyToDB();
                 if (count.Result > 0)
