@@ -1,8 +1,10 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
 using ASP.NET.Assignment.PL.Helpers;
+using ASP.NET.Assignment.PL.Helpers.Services;
 using ASP.NET_Assignment.Controllers;
 using ASP.NET_Assignment.DAL.Models;
 using ASP.NET_Assignment.Models;
+using MailKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -18,10 +20,13 @@ namespace ASP.NET.Assignment.PL.Controllers
         public UserManager<AppUser> _userManager { get; }
         public SignInManager<AppUser> _signInManager { get; }
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public readonly IMailServices _mailService;
+
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailServices mailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _mailService = mailService;
         }
 
 
@@ -140,7 +145,7 @@ namespace ASP.NET.Assignment.PL.Controllers
                     subject = "Reset Password",
                     Body = url
                 };
-                var flag = EmailSettings.SendEmail(Email);
+                var flag = _mailService.SendEmail(Email);
                 if (!flag) ModelState.AddModelError("", "Something Wrong happened try again later");
                 else return View("CheckInbox");
 
