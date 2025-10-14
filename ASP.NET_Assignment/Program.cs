@@ -30,6 +30,7 @@ namespace ASP.NET_Assignment
                 config.LoginPath = "/Account/SignIn";
             });
             builder.Services.AddScoped<RoleService>();
+            builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
             //builder.Services.AddScoped    => Create Object Life Time Per Request   then will be unreachable object
             //builder.Services.AddTransient => Create Object Life Time Per Operation   then will be unreachable object
             //builder.Services.AddSingleton => Create Object Life Time Per Applecation   then will be unreachable object
