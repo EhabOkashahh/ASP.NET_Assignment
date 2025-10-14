@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Elfie.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using NuGet.Versioning;
+using System.Threading.Tasks;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
@@ -52,6 +53,44 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View(usersToReturn);
         }
 
+        public async Task<IActionResult> Profile(string Id)
+        {
+            var user =await _userManager.FindByIdAsync(Id);
+            var model = new UserToReturnDto(){
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Image = user.ImageName
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Profile(string id,UserToReturnDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                
+                if (model.ImageLink is not null && model.Image == "DefaultPFP.png")
+                {
+                    model.Image = AttachmentsSettings.Upload(model.ImageLink);
+                }
+                else
+                {
+                    AttachmentsSettings.Delete(model.Image);
+                    model.Image = AttachmentsSettings.Upload(model.ImageLink);
+                }
+
+                    var user = await _userManager.FindByIdAsync(model.Id);
+                user.UserName = model.UserName;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                user.ImageName = model.Image;
+                await _userManager.UpdateAsync(user);
+            }
+            return View(model);
+        }
 
         public async Task<IActionResult> Details(string? id)
         {

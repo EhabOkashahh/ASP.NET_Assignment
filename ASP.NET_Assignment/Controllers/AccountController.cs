@@ -55,6 +55,7 @@ namespace ASP.NET.Assignment.PL.Controllers
                             LastName = model.LastName,
                             Email = model.Email,
                             IsAgree = model.IsAgree,
+                            ImageName = "DefaultPFP.png"
                         };
                         var result = await _userManager.CreateAsync(user, model.Password);
                         await _userManager.AddToRoleAsync(user  , "Member");

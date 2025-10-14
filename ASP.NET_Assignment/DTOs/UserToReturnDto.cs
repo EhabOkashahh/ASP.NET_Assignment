@@ -10,6 +10,8 @@ namespace ASP.NET.Assignment.PL.DTOs
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Image { get; set; }
+        public IFormFile? ImageLink { get; set; } 
         public IEnumerable<string>? Roles { get; set; } = new List<string>();
 
     }

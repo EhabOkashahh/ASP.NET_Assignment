@@ -1,0 +1,28 @@
+﻿@model UserToReturnDto
+@{
+    ViewData["Title"] = "Profile";
+
+}
+
+<center>
+    <div class="mt-4">
+        <img width="200" height="200" style="border-radius:50%;" src="~/Files/Images/@Model.Image" />
+    </div>
+</center>
+<h1 class="mb-3">Profile</h1>
+<form asp-action="Profile" enctype="multipart/form-data">
+    <partial name="PartialViews/_FormView">
+        <div class="mb-3">
+            <label asp-for="ImageLink" class="form-label">Upload Image</label>
+            <input asp-for="ImageLink" class="form-control" type="file">
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">Save Changes</button>
+        <a class="btn btn-light mt-2" asp-action="Index" asp-controller="Home" >Home</a>
+        <input asp-for="Image" hidden />
+</form>
+
+@section ValidationSection {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
