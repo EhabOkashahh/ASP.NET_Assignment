@@ -10,8 +10,35 @@
     </div>
 </center>
 <h1 class="mb-3">Profile</h1>
-<form asp-action="Profile" enctype="multipart/form-data">
+<div asp-validation-summary="All" class="text-danger"></div>
+<form asp-action="Profile" enctype="multipart/form-data" >
     <partial name="PartialViews/_FormView">
+        <div class="mb-3">
+            @if (Model.PhoneNumber is null)
+            {
+                <img width="15" height="15" src="~/Files/Icons/mingcute--warning-fill.png" />
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control">
+                <button class="mt-1 btn btn-warning" disabled>Confirm phoneNumber</button>
+            }
+            else
+            {
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control">
+                if (!Model.IsConfirmed)
+                {
+                    <div style="display:flex; align-items:center; gap:10px; font-size:12px;">
+                        <a asp-action="ConfirmPhoneNumber" asp-route-Id="@Model.Id" class="mt-1 btn btn-warning">Confirm phonenumber</a>
+                        <span class="opacity-75">Please make sure your phone is nearby, as this button will send you an SMS message.</span>
+                    </div>
+                    <span style="font-size:12px;" class="text-danger">@ViewData["PhoneNumber"]</span>
+                }
+                else
+                {
+                    <div class="alert alert-success">Your Phone Number Is Confirmed</div>
+                }
+            }
+        </div>
         <div class="mb-3">
             <label asp-for="ImageLink" class="form-label">Upload Image</label>
             <input asp-for="ImageLink" class="form-control" type="file">

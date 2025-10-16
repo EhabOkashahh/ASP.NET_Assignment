@@ -1,6 +1,6 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
 using ASP.NET.Assignment.PL.Helpers;
-using ASP.NET.Assignment.PL.Helpers.Services;
+using ASP.NET.Assignment.PL.Helpers.Services.Mail;
 using ASP.NET_Assignment.Controllers;
 using ASP.NET_Assignment.DAL.Models;
 using ASP.NET_Assignment.Models;
