@@ -8,8 +8,10 @@ namespace ASP.NET.Assignment.PL.Helpers.Services.SMS
     {
         public MessageResource SendSMS(SMSStructure sMSStructure)
         {
+            var sid = _options.Value.AccountSID.Trim('"');
+            var token = _options.Value.AuthToken.Trim('"');
             //Establish Connection
-            TwilioClient.Init(_options.Value.AccountSID,_options.Value.AuthToken);
+            TwilioClient.Init(sid,token);
 
             //Build Message
             var message = MessageResource.Create(

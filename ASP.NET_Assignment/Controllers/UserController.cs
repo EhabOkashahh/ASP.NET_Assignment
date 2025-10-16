@@ -103,6 +103,10 @@ namespace ASP.NET.Assignment.PL.Controllers
                 }
                 
                 var user = await _userManager.FindByIdAsync(model.Id);
+                if(user.PhoneNumber != model.PhoneNumber)
+                {
+                    user.PhoneNumberConfirmed = false;
+                }
                 user.UserName = model.UserName;
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
@@ -126,7 +130,7 @@ namespace ASP.NET.Assignment.PL.Controllers
                 To = $"+2{user.PhoneNumber}",
                 Body = $"Your OTP To Confirm Your Phonenumber is \n ${otp}"
             };
-            //_smsService.SendSMS(Sms);
+            _smsService.SendSMS(Sms);
 
             ConfirmPhoneNumberDTO model = new ConfirmPhoneNumberDTO()
             {
