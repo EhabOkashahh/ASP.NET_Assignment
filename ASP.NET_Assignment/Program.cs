@@ -44,13 +44,15 @@ namespace ASP.NET_Assignment
 
             builder.Services.AddAuthentication(options =>
             {
-                options.DefaultScheme = GoogleDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             })
+             .AddCookie()
              .AddGoogle(options =>
              {
                  options.ClientId = builder.Configuration["Authentication:Google:ClientID"];
                  options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                 options.CallbackPath = "/signin_google";
              });
             var app = builder.Build();
 

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Newtonsoft.Json.Linq;
 using System.Data.Common;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ASP.NET.Assignment.PL.Controllers
@@ -201,15 +202,33 @@ namespace ASP.NET.Assignment.PL.Controllers
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
-            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(
-                claim => new
+
+            if (!result.Succeeded)
+                return RedirectToAction("SignIn");
+
+            var email = result.Principal.FindFirstValue(ClaimTypes.Email);
+            var name = result.Principal.FindFirstValue(ClaimTypes.Name);
+            var Phone = result.Principal.FindFirstValue(ClaimTypes.MobilePhone);
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new AppUser
                 {
-                    claim.Type,
-                    claim.Value,
-                    claim.Issuer,
-                    claim.OriginalIssuer
-                }
-            );
+                    UserName = email,
+                    Email = email,
+                    FirstName = name?.Split(' ')[0],
+                    LastName = name?.Split(' ').LastOrDefault(),
+                    EmailConfirmed = true,
+                    PhoneNumber = Phone,
+                    ImageName = "DefaultPFP.png"
+                };
+                await _userManager.CreateAsync(user);
+                await _userManager.AddToRoleAsync(user, "Member");
+            }
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
             return RedirectToAction("Index", "Home");
         }
     }

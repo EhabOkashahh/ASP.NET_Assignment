@@ -80,23 +80,25 @@ namespace ASP.NET.Assignment.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+                var userr =await _userManager.GetUserAsync(User);
+        
                 if (model.ImageLink is not null && model.Image == "DefaultPFP.png")
                 {
                     model.Image = AttachmentsSettings.Upload(model.ImageLink);
                 }
                 else if(model.ImageLink is null)
                 {
-
+                    return View(model);
                 }
                 else
                 {
-                    AttachmentsSettings.Delete(model.Image);
+                    Console.WriteLine("hello");
+                    AttachmentsSettings.Delete(userr.ImageName);
                     model.Image = AttachmentsSettings.Upload(model.ImageLink);
                 }
 
-                var flag = _userManager.Users.Where(u => u.PhoneNumber == model.PhoneNumber && u.Id != model.Id);
-                if(flag.Count() > 0)
+              
+                if (_userManager.Users.Where(u => u.PhoneNumber == model.PhoneNumber && u.Id != model.Id).Any(u=>u.PhoneNumber != null))
                 {
                     ViewData["PhoneNumber"] = "This Number Is Already In Use";
                     return View(model);
