@@ -9,7 +9,7 @@
 
 <div >
     <form class="d-flex justify-content-around">
-        <input class="form-control" placeholder="Enter Name" id="txt" name="SearchText">
+        <input class="form-control" placeholder="Enter Name" type="text" id="Searchtxt" name="SearchText">
         <button class="btn btn-success">Search</button>
     </form>
 </div>
@@ -77,3 +77,26 @@ else
         <h4>There are no Employee</h4>
     </div>
 }
+<script>
+    $(document).ready(function () {
+        const searchBar = $('#Searchtxt');
+        const table = $('#table');
+
+        searchBar.on('keyup', function (event) {
+            var searchValue = searchBar.val();
+
+            $.ajax({
+                url: '/Employees/Search',
+                type: 'Get',
+                data: { SearchText: searchValue },
+                success: function (result) {
+                    table.html(result);
+                    console.log("hello");
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
