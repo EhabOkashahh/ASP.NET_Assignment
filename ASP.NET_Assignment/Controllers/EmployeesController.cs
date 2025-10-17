@@ -31,9 +31,30 @@ namespace ASP.NET.Assignment.PL.Controllers
 
             if (String.IsNullOrEmpty(SearchText)) Employees = await _unitOfWork.EmployeeRepositroy.Value.GetAllAsync();
             else Employees = await _unitOfWork.EmployeeRepositroy.Value.GetByNameAsync(SearchText);
-
             return View(Employees);
+
         }
+        public async Task<IActionResult> Search(string SearchText) 
+        {
+            try
+            {
+                IEnumerable<Employee> Employees;
+
+                if (string.IsNullOrEmpty(SearchText))
+                    Employees = await _unitOfWork.EmployeeRepositroy.Value.GetAllAsync();
+                else
+                    Employees = await _unitOfWork.EmployeeRepositroy.Value.GetByNameAsync(SearchText);
+
+                return PartialView("_EmployeesTablePartialView", Employees);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex); // Logs to console
+                return StatusCode(500, ex.Message); // So you can see error in browser
+            }
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> Create()
         {
