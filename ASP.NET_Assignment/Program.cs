@@ -36,8 +36,11 @@ namespace ASP.NET_Assignment
             builder.Services.AddScoped<RoleService>();
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
             builder.Services.AddScoped<IMailServices, MailServices>();
-            builder.Services.Configure<SMSSettings>(builder.Configuration.GetSection("TwilioSettings"));
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("TwilioSettings"));
             builder.Services.AddScoped<ISMS, SMS>();
+            Console.WriteLine(Environment.GetEnvironmentVariable("TwilioSettings__AccountSID"));
+            Console.WriteLine(Environment.GetEnvironmentVariable("TwilioSettings__AuthToken"));
+            Console.WriteLine(Environment.GetEnvironmentVariable("TwilioSettings__PhoneNumber"));
             //builder.Services.AddScoped    => Create Object Life Time Per Request   then will be unreachable object
             //builder.Services.AddTransient => Create Object Life Time Per Operation   then will be unreachable object
             //builder.Services.AddSingleton => Create Object Life Time Per Applecation   then will be unreachable object
