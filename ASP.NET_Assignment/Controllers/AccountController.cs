@@ -5,6 +5,9 @@ using ASP.NET_Assignment.Controllers;
 using ASP.NET_Assignment.DAL.Models;
 using ASP.NET_Assignment.Models;
 using MailKit;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -183,6 +186,32 @@ namespace ASP.NET.Assignment.PL.Controllers
             return View(model);
         }
         #endregion
+
+
+        public IActionResult GoogleLogin()
+        {
+
+            var prop = new AuthenticationProperties()
+            {
+                RedirectUri = Url.Action("GoogleResponse")
+            };
+            return Challenge(prop, GoogleDefaults.AuthenticationScheme);
+
+        }
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(
+                claim => new
+                {
+                    claim.Type,
+                    claim.Value,
+                    claim.Issuer,
+                    claim.OriginalIssuer
+                }
+            );
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
 

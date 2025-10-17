@@ -8,6 +8,9 @@ using ASP.NET_Assignment.BLL.Repositories;
 using ASP.NET_Assignment.DAL.Data.Contexts;
 using ASP.NET_Assignment.DAL.Models;
 using MailKit;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,14 +41,17 @@ namespace ASP.NET_Assignment
             builder.Services.AddScoped<IMailServices, MailServices>();
             builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("TwilioSettings"));
             builder.Services.AddScoped<ISMS, SMS>();
-            Console.WriteLine(Environment.GetEnvironmentVariable("TwilioSettings__AccountSID"));
-            Console.WriteLine(Environment.GetEnvironmentVariable("TwilioSettings__AuthToken"));
-            Console.WriteLine(Environment.GetEnvironmentVariable("TwilioSettings__PhoneNumber"));
-            //builder.Services.AddScoped    => Create Object Life Time Per Request   then will be unreachable object
-            //builder.Services.AddTransient => Create Object Life Time Per Operation   then will be unreachable object
-            //builder.Services.AddSingleton => Create Object Life Time Per Applecation   then will be unreachable object
 
-
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = GoogleDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            })
+             .AddGoogle(options =>
+             {
+                 options.ClientId = builder.Configuration["Authentication:Google:ClientID"];
+                 options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+             });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -59,11 +65,10 @@ namespace ASP.NET_Assignment
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
