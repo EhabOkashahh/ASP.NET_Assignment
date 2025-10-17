@@ -5,7 +5,7 @@ using Microsoft.VisualBasic.FileIO;
 using MimeKit;
 using System.Security;
 
-namespace ASP.NET.Assignment.PL.Helpers.Services
+namespace ASP.NET.Assignment.PL.Helpers.Services.Mail
 {
     public class MailServices(IOptions<MailSettings> _option) : IMailServices
     {

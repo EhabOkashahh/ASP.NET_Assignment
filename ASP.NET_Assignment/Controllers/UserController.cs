@@ -1,15 +1,19 @@
 ﻿using ASP.NET.Assignment.PL.DTOs;
 using ASP.NET.Assignment.PL.Helpers;
+using ASP.NET.Assignment.PL.Helpers.Services.SMS;
 using ASP.NET_Assignment.DAL.Models;
 using AspNetCoreGeneratedDocument;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using MimeKit;
 using NuGet.Versioning;
 using System.Threading.Tasks;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace ASP.NET.Assignment.PL.Controllers
 {
@@ -20,12 +24,15 @@ namespace ASP.NET.Assignment.PL.Controllers
         public RoleManager<AppRole> _roleManager { get; }
         public RoleService _roleService { get; }
 
-        public UserController(UserManager<AppUser> userManager , SignInManager<AppUser> signInManager , RoleManager<AppRole> roleManager,RoleService roleService)
+        public  ISMS _smsService { get;}
+
+        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager, RoleService roleService, ISMS smsService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _roleService = roleService;
+            _smsService = smsService;
         }
 
 
@@ -56,11 +63,14 @@ namespace ASP.NET.Assignment.PL.Controllers
         public async Task<IActionResult> Profile(string Id)
         {
             var user =await _userManager.FindByIdAsync(Id);
-            var model = new UserToReturnDto(){
+            var model = new UserToReturnDto() {
+                Id = user.Id,
                 UserName = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                IsConfirmed = user.PhoneNumberConfirmed,
                 Image = user.ImageName
             };
             return View(model);
@@ -75,21 +85,77 @@ namespace ASP.NET.Assignment.PL.Controllers
                 {
                     model.Image = AttachmentsSettings.Upload(model.ImageLink);
                 }
+                else if(model.ImageLink is null)
+                {
+
+                }
                 else
                 {
                     AttachmentsSettings.Delete(model.Image);
                     model.Image = AttachmentsSettings.Upload(model.ImageLink);
                 }
 
-                    var user = await _userManager.FindByIdAsync(model.Id);
+                var flag = _userManager.Users.Where(u => u.PhoneNumber == model.PhoneNumber && u.Id != model.Id);
+                if(flag.Count() > 0)
+                {
+                    ViewData["PhoneNumber"] = "This Number Is Already In Use";
+                    return View(model);
+                }
+                
+                var user = await _userManager.FindByIdAsync(model.Id);
+                if(user.PhoneNumber != model.PhoneNumber)
+                {
+                    user.PhoneNumberConfirmed = false;
+                }
                 user.UserName = model.UserName;
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.Email = model.Email;
+                user.PhoneNumber = model.PhoneNumber;
                 user.ImageName = model.Image;
                 await _userManager.UpdateAsync(user);
             }
             return View(model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ConfirmPhoneNumber(string Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id);
+            Random rnd = new Random();
+            var otp = rnd.Next(100000,999999).ToString();
+            user.OTP = otp;
+            await _userManager.UpdateAsync(user);
+            SMSStructure Sms = new SMSStructure()
+            {
+                To = $"+2{user.PhoneNumber}",
+                Body = $"Your OTP To Confirm Your Phonenumber is \n ${otp}"
+            };
+            _smsService.SendSMS(Sms);
+
+            ConfirmPhoneNumberDTO model = new ConfirmPhoneNumberDTO()
+            {
+                Phonenumber = user.PhoneNumber
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ConfirmPhoneNumber([FromBody]ConfirmPhoneNumberDTO dTO)
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return BadRequest(new { message = "User not found" });
+
+            if (user.OTP == dTO.otp)
+            {
+                user.PhoneNumberConfirmed = true;
+                user.OTP = null;
+                await _userManager.UpdateAsync(user);
+                return Ok(new { success = true, message = "OTP confirmed!" });
+            }
+
+            return BadRequest(new { success = false, message = "Invalid OTP" });
         }
 
         public async Task<IActionResult> Details(string? id)

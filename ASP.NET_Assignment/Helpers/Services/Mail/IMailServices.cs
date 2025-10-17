@@ -1,4 +1,4 @@
-﻿namespace ASP.NET.Assignment.PL.Helpers.Services
+﻿namespace ASP.NET.Assignment.PL.Helpers.Services.Mail
 {
     public interface IMailServices
     {

@@ -1,0 +1,72 @@
+﻿@model ConfirmPhoneNumberDTO
+
+<!doctype html>
+<html lang="en">
+
+
+<head>
+    <style>
+        .mainDiv{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            flex-direction:column;
+            gap:10px;
+        }
+        .otp-field {
+            display: flex;
+        }
+
+            .otp-field input {
+                width: 40px;
+                font-size: 32px;
+                padding: 10px;
+                text-align: center;
+                border-radius: 5px;
+                margin: 2px;
+                border: 2px solid #55525c;
+                font-weight: bold;
+                color: black;
+                outline: none;
+                transition: all 0.1s;
+            }
+
+                .otp-field input:focus {
+                    border: 2px solid #81E3FE;
+                    box-shadow: 0 0 2px 2px #81E3FE;
+                }
+
+        .disabled {
+            opacity: 0.5;
+        }
+
+        .space {
+            margin-right: 1rem !important;
+        }
+    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<
+<body class="body">
+    <form class="mainDiv">
+        <div>
+            <p>OTP sent to @Model.Phonenumber</p>
+            <h1>Enter OTP</h1>
+        </div>
+        <div class="otp-field">
+            <input type="text" maxlength="1" />
+            <input type="text" maxlength="1" />
+            <input class="space" type="text" maxlength="1" />
+            <input type="text" maxlength="1" />
+            <input type="text" maxlength="1" />
+            <input type="text" maxlength="1" />
+        </div>
+        <button class="btn btn-success" type="submit">Confirm</button>
+    </form>
+
+
+    <script src="~/js/OTP.js"></script>
+</body>
+
+</html>

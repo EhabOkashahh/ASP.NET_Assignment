@@ -13,6 +13,7 @@ namespace ASP.NET_Assignment.DAL.Models
         public string LastName { get; set; }
         public string? ImageName{ get; set; }
         public bool IsAgree { get; set; }
+        public string? OTP { get; set; }
 
     }
 }
