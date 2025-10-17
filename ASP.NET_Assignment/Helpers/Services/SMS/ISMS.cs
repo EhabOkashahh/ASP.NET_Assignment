@@ -5,6 +5,6 @@ namespace ASP.NET.Assignment.PL.Helpers.Services.SMS
 {
     public interface ISMS
     {
-        public MessageResource SendSMS(SMSStructure sMSStructure);
+        public bool SendSMS(SMSStructure sMSStructure);
     }
 }

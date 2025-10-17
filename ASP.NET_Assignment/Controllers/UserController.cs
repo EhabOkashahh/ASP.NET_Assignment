@@ -130,8 +130,12 @@ namespace ASP.NET.Assignment.PL.Controllers
                 To = $"+2{user.PhoneNumber}",
                 Body = $"Your OTP To Confirm Your Phonenumber is \n ${otp}"
             };
-            _smsService.SendSMS(Sms);
-
+             var messageStat = _smsService.SendSMS(Sms);
+            if (!messageStat)
+            {
+                return View("MessageFaildView");
+            }
+           
             ConfirmPhoneNumberDTO model = new ConfirmPhoneNumberDTO()
             {
                 Phonenumber = user.PhoneNumber
